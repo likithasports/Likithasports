@@ -19,3 +19,9 @@ Routes: `/`, `/logo.png`, `/healthz`, `/robots.txt`; unknown routes return 404. 
 The three-slide carousel runs automatically every three seconds, has manual slide and pause controls, and pauses in hidden browser tabs. Category filters and service links populate the WhatsApp enquiry composer. No enquiry is stored or sent automatically by this app.
 
 Images are currently hosted at https://likithasports.com/. Contact details follow the existing website. No additional certification claims or project statistics have been added; the supplied logo is displayed as provided.
+
+## Interactive service catalogue
+
+The shared service catalogue in `catalog.py` renders all nine homepage service cards, individual pages at `/services/<slug>`, and JSON responses at `/api/services`. The catalogue API accepts `q` and `category` (`all`, `court`, `field`, `facility`). Unknown API categories return 400; unknown services return 404.
+
+Homepage search combines terms with the selected category, updates the result count, supports an empty state and reset, and retains filters in the URL. Server-rendered query results and detail links work without JavaScript. Service pages preselect the matching enquiry option. Expandable FAQs use native HTML details. Cards animate into view when motion preferences allow it. No accounts, bookings, database, or admin dashboard are included in this version.
