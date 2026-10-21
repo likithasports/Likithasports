@@ -16,7 +16,7 @@ The checked-in `vercel.json` explicitly packages `app.py` with `@vercel/python` 
 
 Routes: `/`, `/logo.png`, `/healthz`, `/robots.txt`; unknown routes return 404. GET and HEAD are supported; other methods return 405.
 
-The three-slide carousel runs automatically every three seconds, has manual slide and pause controls, and pauses in hidden browser tabs. Category filters and service links populate the WhatsApp enquiry composer. No enquiry is stored or sent automatically by this app.
+The hero carousel uses dashboard-managed slides (one to six), rotates every six seconds, and provides previous/next buttons, slide selectors, keyboard arrows, touch swipes, and pause/play. It pauses on hover and in hidden browser tabs; focus entry or manual navigation stops rotation until Play is chosen. Reduced-motion users start with autoplay off and receive no transitions. The headline and enquiry actions remain stationary. With JavaScript disabled, the first slide stays visible and inactive controls stay hidden. Category filters and service links populate the WhatsApp enquiry composer. No enquiry is stored or sent automatically by this app.
 
 Images are currently hosted at https://likithasports.com/. Contact details follow the existing website. No additional certification claims or project statistics have been added; the supplied logo is displayed as provided.
 
