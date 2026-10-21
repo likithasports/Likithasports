@@ -1,6 +1,6 @@
 # Likitha Sports
 
-Responsive Python WSGI website using the supplied Likitha logo and its sampled colours: navy `#0B1E55`, green `#27BB36`, white `#FFFFFF`. The original logo is embedded losslessly in `app.py` and served at `/logo.png`.
+Responsive Python WSGI website using the supplied Likitha logo and its sampled colours: navy `#0B1E55`, green `#27BB36`, white `#FFFFFF`. The transparent logo is stored in `assets/logo-transparent.png` and served at `/logo.png`; the original uploaded source is unchanged.
 
 ## Run locally
 
@@ -12,7 +12,7 @@ Visit http://localhost:8000. For Render, install requirements and run `gunicorn 
 
 ## Vercel
 
-The checked-in `vercel.json` explicitly packages `app.py` with `@vercel/python` and sends all request paths to the WSGI app. Python is pinned to 3.12 via `.python-version`. This working builder configuration overrides dashboard build settings. No environment secrets or database are required.
+The checked-in `vercel.json` explicitly packages `app.py` with `@vercel/python` and sends application paths to the WSGI app. The logo is explicitly bundled as a static asset and routed separately. Python is pinned to 3.12 via `.python-version`. This working builder configuration overrides dashboard build settings. No environment secrets or database are required.
 
 Routes: `/`, `/logo.png`, `/healthz`, `/robots.txt`; unknown routes return 404. GET and HEAD are supported; other methods return 405.
 

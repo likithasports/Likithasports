@@ -1,5 +1,23 @@
 {
   "version": 2,
-  "builds": [{"src": "app.py", "use": "@vercel/python"}],
-  "routes": [{"src": "/(.*)", "dest": "app.py"}]
+  "builds": [
+    {
+      "src": "app.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "assets/logo-transparent.png",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/logo.png",
+      "dest": "/assets/logo-transparent.png"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "app.py"
+    }
+  ]
 }
