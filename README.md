@@ -1,31 +1,21 @@
 # Likitha Sports
 
-Responsive sports infrastructure website, served by a Python WSGI application.
+Responsive Python WSGI website using the supplied Likitha logo and its sampled colours: navy `#0B1E55`, green `#27BB36`, white `#FFFFFF`. The original logo is embedded losslessly in `app.py` and served at `/logo.png`.
 
 ## Run locally
 
 ```sh
-python -m pip install -r requirements.txt
 python app.py
 ```
 
-Visit http://localhost:8000. For production:
+Visit http://localhost:8000. For Render, install requirements and run `gunicorn app:app --bind 0.0.0.0:$PORT`.
 
-```sh
-gunicorn app:app --bind 0.0.0.0:${PORT:-8000}
-```
+## Vercel
 
-## Features
+The checked-in `vercel.json` explicitly packages `app.py` with `@vercel/python` and sends all request paths to the WSGI app. Python is pinned to 3.12 via `.python-version`. This working builder configuration overrides dashboard build settings. No environment secrets or database are required.
 
-- Three-slide landing carousel with manual controls, pause and reduced-motion support
-- Service category filters and enquiry selection
-- Construction process and expandable FAQs
-- WhatsApp enquiry composer; visitors review and send in WhatsApp
-- Responsive navigation and contact links
-- GET/HEAD support, health endpoint at `/healthz`, appropriate 404/405 responses
+Routes: `/`, `/logo.png`, `/healthz`, `/robots.txt`; unknown routes return 404. GET and HEAD are supported; other methods return 405.
 
-## Deployment
+The three-slide carousel runs automatically every three seconds, has manual slide and pause controls, and pauses in hidden browser tabs. Category filters and service links populate the WhatsApp enquiry composer. No enquiry is stored or sent automatically by this app.
 
-Render Python web service, branch `main`, build command `pip install -r requirements.txt`, start command `gunicorn app:app --bind 0.0.0.0:$PORT`. No database or secrets are required.
-
-Content and images use https://likithasports.com/ (reviewed 18 October 2026). Images currently load from that existing website. Business contact details follow its current published contact information. Additional service enquiries reflect the owner's supplied service list. No certifications, warranty periods, testimonials or project statistics are implied. Competitor references reviewed for information architecture: https://gallantsports.in/ and https://pacecourt.com/. No competitor copy or imagery is included.
+Images are currently hosted at https://likithasports.com/. Contact details follow the existing website. No additional certification claims or project statistics have been added; the supplied logo is displayed as provided.
