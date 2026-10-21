@@ -64,6 +64,9 @@ class DashboardFlow(unittest.TestCase):
   status,body,headers=self.request(data['url']);self.assertEqual(status,200);self.assertEqual(body,raw);self.assertEqual(headers['Content-Type'],'image/png')
   content=self.request('/api/admin/content',auth=True)[1];content['services'][0]['image']=data['url'];self.assertEqual(self.request('/api/admin/content','POST',content,auth=True)[0],200)
   self.assertIn(data['url'].encode(),self.request('/services/basketball-courts')[1])
+  home=self.request('/')[1]
+  self.assertIn(('src="'+data['url']+'"').encode(),home)
+  self.assertNotIn(('https://likithasports.com/assets/home/'+data['url']).encode(),home)
  def test_invalid_content_and_no_public_secrets(self):
   self.setup_owner();data=cms.defaults();data['hero']['line1']='<script>alert(1)</script>'
   self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],200)

@@ -107,7 +107,7 @@ def render_card(service, number, visible=True):
     title = escape(s['title'])
     search_text = escape(' '.join([s['title'], s['summary'], CATEGORIES[s['category']], *s['scope']]).casefold(), quote=True)
     if s['image']:
-        visual = '<div class="card-image"><img src="https://likithasports.com/assets/home/' + escape(s['image']) + '" alt="' + title + '" width="600" height="400" loading="lazy"></div>'
+        visual = '<div class="card-image"><img src="' + escape(cms.image_url(s['image']), quote=True) + '" alt="' + title + '" width="600" height="400" loading="lazy"></div>'
     else:
         visual = service_icon(s['category'], number)
     hidden = '' if visible else ' hidden'
