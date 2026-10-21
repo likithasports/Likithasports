@@ -12,6 +12,6 @@ SERVICES = [
 ]
 CATEGORIES = {'court': 'Courts', 'field': 'Turfs & tracks', 'facility': 'Facilities'}
 
-def find_services(query='', category='all'):
+def find_services(query='', category='all', services=None):
     terms = query.casefold().split()
-    return [s for s in SERVICES if (category == 'all' or s['category'] == category) and all(term in (' '.join([s['title'], s['summary'], CATEGORIES[s['category']], *s['scope']])).casefold() for term in terms)]
+    return [s for s in (SERVICES if services is None else services) if (category == 'all' or s['category'] == category) and all(term in (' '.join([s['title'], s['summary'], CATEGORIES[s['category']], *s['scope']])).casefold() for term in terms)]

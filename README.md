@@ -24,4 +24,22 @@ Images are currently hosted at https://likithasports.com/. Contact details follo
 
 The shared service catalogue in `catalog.py` renders all nine homepage service cards, individual pages at `/services/<slug>`, and JSON responses at `/api/services`. The catalogue API accepts `q` and `category` (`all`, `court`, `field`, `facility`). Unknown API categories return 400; unknown services return 404.
 
-Homepage search combines terms with the selected category, updates the result count, supports an empty state and reset, and retains filters in the URL. Server-rendered query results and detail links work without JavaScript. Service pages preselect the matching enquiry option. Expandable FAQs use native HTML details. Cards animate into view when motion preferences allow it. No accounts, bookings, database, or admin dashboard are included in this version.
+Homepage search combines terms with the selected category, updates the result count, supports an empty state and reset, and retains filters in the URL. Server-rendered query results and detail links work without JavaScript. Service pages preselect the matching enquiry option. Expandable FAQs use native HTML details. Cards animate into view when motion preferences allow it. Customer accounts and bookings are not included. An owner content dashboard is available at `/dashboard`.
+
+## Content dashboard
+
+`/dashboard` provides password-protected editing for homepage text, service entries and carousel slides. Images (PNG/JPEG/WebP, up to 2 MB and 20 megapixels) are validated server-side and stored in a private Vercel Blob store. Only website images are delivered through the public `/media/<opaque-id>` route. Service visibility, service addition/removal and slide reordering are supported. Changes affect the public pages after Publish.
+
+`BLOB_READ_WRITE_TOKEN` is automatically supplied by the connected `likitha-sports-content` Vercel Blob store. Do not commit tokens. There is no production filesystem persistence or client-only persistence. Published content is stored as immutable timestamped JSON versions; reads select the latest version. Prior versions are retained. Publishing checks the editor revision to detect an already-published update. Concurrent publishes that start at exactly the same time may both be retained, with the newest version taking effect.
+
+### Owner setup
+
+First-time setup at `/dashboard/setup` is permitted **only on a Preview deployment protected by Vercel Authentication**, or in explicit local test mode. Production rejects the setup endpoint. The setup deployment must never be made public or have Deployment Protection disabled. The first successful setup stores a PBKDF2-SHA256 password hash and random signing key in private Blob storage; subsequent setup attempts are refused atomically by a non-overwriting object creation. After setup, sign in at the production `/dashboard` URL with the password you chose.
+
+The dashboard uses signed eight-hour HttpOnly/SameSite=Strict cookies, Secure cookies on Vercel, origin checks and session-specific CSRF tokens on writes. Login attempts are rate-limited per IP and 15-minute bucket in persistent storage. Signing out clears the browser cookie. Do not use shared computers without signing out.
+
+Content editing is intended for a small owner-managed site. There is one admin password, no customer registration and no public upload endpoint. All write endpoints require admin authentication except the protected first-time setup flow.
+
+### Checks
+
+Run `python -m unittest discover -s tests -v`. Tests use an isolated temporary storage adapter enabled through `CMS_TEST_DIR`; the adapter is ignored on Vercel. The production app always uses Vercel Blob. `CMS_DEV_SETUP=1` is a local testing option and is not deployed.

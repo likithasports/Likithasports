@@ -6,6 +6,8 @@ import re
 from html import escape
 from urllib.parse import parse_qs
 from catalog import SERVICES, CATEGORIES, find_services
+import cms
+import dashboard
 from wsgiref.simple_server import make_server
 
 LOGO_PATH = Path(__file__).parent / 'assets' / 'logo-transparent.png'
@@ -47,7 +49,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&navigation.classLis
 if(document.getElementById('pause')){
 const slides=[{image:'football-truf.webp',alt:'Football turf',category:'FIELDS & TURFS / 01',title:'More room for your game.'},{image:'basketball.webp',alt:'Basketball court',category:'BASKETBALL COURTS / 02',title:'Built for the next big shot.'},{image:'tennis.webp',alt:'Outdoor tennis court',category:'OUTDOOR TENNIS COURTS / 03',title:'A fresh surface. A new game.'}];
 const dots=[...document.querySelectorAll('.dot')],pause=document.getElementById('pause');let current=0,paused=false,timer;
-function showSlide(i){current=i;const s=slides[i],img=document.getElementById('hero-image');img.src='https://likithasports.com/assets/home/'+s.image;img.alt=s.alt;document.getElementById('slide-category').textContent=s.category;document.getElementById('slide-title').textContent=s.title;dots.forEach((b,j)=>b.setAttribute('aria-pressed',String(j===i)))}
+function showSlide(i){current=i;const s=slides[i],img=document.getElementById('hero-image');img.src=s.image;img.alt=s.alt;document.getElementById('slide-category').textContent=s.category;document.getElementById('slide-title').textContent=s.title;dots.forEach((b,j)=>b.setAttribute('aria-pressed',String(j===i)))}
 function schedule(){clearInterval(timer);if(!paused&&!document.hidden)timer=setInterval(()=>showSlide((current+1)%slides.length),3000);pause.textContent=paused?'Play':'Pause';pause.setAttribute('aria-label',paused?'Play slideshow':'Pause slideshow')}
 dots.forEach((b,i)=>b.addEventListener('click',()=>{showSlide(i);schedule()}));pause.addEventListener('click',()=>{paused=!paused;schedule()});document.addEventListener('visibilitychange',schedule);schedule();
 }
@@ -83,14 +85,16 @@ def render_card(service, number, visible=True):
     return f'<article class="card" data-category="{s["category"]}" data-slug="{s["slug"]}" data-search="{search_text}"{hidden}>{visual}<div class="card-body"><span class="label">{escape(CATEGORIES[s["category"]]).upper()} / {number:02}</span><h3>{title}</h3><p>{escape(s["summary"])}</p><a href="/services/{s["slug"]}">Explore solution <span aria-hidden="true">↗</span></a></div></article>'
 
 
-def home_page(query_string=''):
+def home_page(query_string='', content=None):
+    content = content or cms.load_content()
+    services = cms.published_services(content)
     params = parse_qs(query_string)
     query = params.get('q', [''])[0][:100]
     category = params.get('category', ['all'])[0]
     if category not in (*CATEGORIES, 'all'):
         category = 'all'
-    matches = {s['slug'] for s in find_services(query, category)}
-    cards = ''.join(render_card(s, i, s['slug'] in matches) for i, s in enumerate(SERVICES, 1))
+    matches = {s['slug'] for s in find_services(query, category, services)}
+    cards = ''.join(render_card(s, i, s['slug'] in matches) for i, s in enumerate(services, 1))
     page = PAGE.replace('__SERVICE_CARDS__', cards)
     page = page.replace('placeholder="Search courts, pools, tracks…" value=""', 'placeholder="Search courts, pools, tracks…" value="' + escape(query, quote=True) + '"')
     page = page.replace('name="category" value="all"', 'name="category" value="' + category + '"')
@@ -100,28 +104,44 @@ def home_page(query_string=''):
     page = page.replace('9 solutions available', f'{count} ' + ('solution' if count == 1 else 'solutions') + ' found')
     if not matches:
         page = page.replace('id="empty-results" hidden', 'id="empty-results"')
+    hero = content['hero']
+    page = page.replace('Great spaces.<br><span>Greater games.</span>', escape(hero['line1']) + '<br><span>' + escape(hero['line2']) + '</span>')
+    page = page.replace('Courts, turfs and sports infrastructure.<br>From your first idea to the first game.', escape(hero['description']))
+    slides = [dict(slide, image=cms.image_url(slide['image'])) for slide in content['slides']]
+    slides_json = json.dumps(slides, ensure_ascii=False).replace('<', '\\u003c')
+    page = re.sub(r'const slides=\[.*?\];', lambda _: 'const slides=' + slides_json + ';', page, count=1)
+    first = content['slides'][0]
+    page = re.sub(r'src="https://likithasports.com/assets/home/football-truf.webp" width="650" height="650" alt="Football turf"', lambda _: 'src="' + escape(cms.image_url(first['image']), quote=True) + '" width="650" height="650" alt="' + escape(first['alt'], quote=True) + '"', page, count=1)
+    page = page.replace('id="slide-category">FIELDS & TURFS / 01', 'id="slide-category">' + escape(first['category']))
+    page = page.replace('id="slide-title">More room for your game.', 'id="slide-title">' + escape(first['title']))
+    dots = ''.join('<button class="dot" aria-label="Slide ' + str(i) + ': ' + escape(slide['alt'], quote=True) + '" aria-pressed="' + str(i == 1).lower() + '"></button>' for i, slide in enumerate(content['slides'], 1))
+    page = re.sub(r'<button class="dot".*?(?=<button class="pause")', lambda _: dots, page, count=1, flags=re.S)
+    options = ''.join('<option>' + escape(item['title']) + '</option>' for item in services) + '<option>Other sports infrastructure</option>'
+    page = re.sub(r'(<select id="sport" name="sport">).*?(</select>)', lambda m: m[1] + options + m[2], page, count=1, flags=re.S)
     return page
 
 
-def service_page(slug):
-    service = next((s for s in SERVICES if s['slug'] == slug), None)
+def service_page(slug, content=None):
+    content = content or cms.load_content()
+    services = cms.published_services(content)
+    service = next((s for s in services if s['slug'] == slug), None)
     if service is None:
         return None
     s = service
     title = escape(s['title'])
     if s['image']:
-        visual = f'<img class="detail-image" src="https://likithasports.com/assets/home/{s["image"]}" alt="{title}" width="650" height="420" fetchpriority="high">'
+        visual = f'<img class="detail-image" src="{escape(cms.image_url(s['image']), quote=True)}" alt="{title}" width="650" height="420" fetchpriority="high">'
     else:
-        visual = '<div class="detail-art">' + service_icon(s['category'], SERVICES.index(s) + 1) + f'<h2>{title}</h2><p>Planned around your space. Built around your game.</p></div>'
+        visual = '<div class="detail-art">' + service_icon(s['category'], services.index(s) + 1) + f'<h2>{title}</h2><p>Planned around your space. Built around your game.</p></div>'
     scope = ''.join('<li>' + escape(item) + '</li>' for item in s['scope'])
-    related = [other for other in SERVICES if other['slug'] != slug]
+    related = [other for other in services if other['slug'] != slug]
     related.sort(key=lambda other: other['category'] != s['category'])
     links = ''.join(f'<a href="/services/{other["slug"]}">{escape(other["title"])} ↗</a>' for other in related[:3])
     details = f'''<section class="detail-hero"><div class="wrap"><div class="breadcrumb"><a href="/">Home</a> / <a href="/#solutions">Solutions</a> / {title}</div><div class="detail-grid"><div><p class="eyebrow">{escape(CATEGORIES[s['category']])}</p><h1>{title}</h1><p>{escape(s['summary'])}</p><div class="actions"><a class="btn green" href="#contact">Enquire about this solution ↗</a><a class="btn outline" href="/#solutions">All solutions</a></div></div>{visual}</div></div></section><section class="section"><div class="wrap detail-content"><div><p class="eyebrow">Your project, considered</p><h2>Let's talk about the details.</h2><ul class="scope-list">{scope}</ul><p style="font-size:12px;color:var(--muted)">The final scope is agreed around your site and requirements.</p></div><aside class="planning-box"><h3>A good place to start</h3><p>{escape(s['prompt'])}</p><p>Have a drawing or site plan? Mention it in your enquiry and discuss it with our team on WhatsApp.</p><a class="btn" href="#contact">Share your project ↗</a></aside></div></section><section class="section about"><div class="wrap"><p class="eyebrow">Keep exploring</p><h2>More possibilities for your space.</h2><div class="related-links">{links}</div></div></section>'''
-    page = re.sub(r'<section class="hero".*?(?=<section class="section" id="faq">)', lambda _: details, PAGE, count=1, flags=re.S)
+    page = re.sub(r'<section class="hero".*?(?=<section class="section" id="faq">)', lambda _: details, home_page('', content), count=1, flags=re.S)
     page = page.replace('<title>Likitha Sports | Sports Surfaces & Infrastructure</title>', f'<title>{title} | Likitha Sports</title>')
     page = page.replace('content="Sports surfaces, courts, turfs and infrastructure for schools, academies and communities. Build your next sports space with Likitha Sports."', 'content="' + escape(s['summary'], quote=True) + ' Discuss your project with Likitha Sports."')
-    page = page.replace('<option>' + s['title'] + '</option>', '<option selected>' + title + '</option>')
+    page = page.replace('<option>' + title + '</option>', '<option selected>' + title + '</option>')
     return page
 
 
@@ -129,6 +149,14 @@ def service_page(slug):
 def app(environ, start_response):
     path = environ.get('PATH_INFO', '/')
     method = environ.get('REQUEST_METHOD', 'GET')
+    if path.startswith('/api/admin/') or path.startswith('/media/'):
+        return cms.handle(environ, start_response)
+    if path in ('/dashboard', '/dashboard/', '/dashboard/setup'):
+        if method not in ('GET', 'HEAD'):
+            return cms.response(start_response, 405, {'error': 'Use GET or HEAD.'}, [('Allow', 'GET, HEAD')])
+        body = dashboard.PAGE.encode('utf-8')
+        start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8'), ('Content-Length', str(len(body))), ('Cache-Control', 'no-store'), ('X-Robots-Tag', 'noindex, nofollow'), ('X-Frame-Options', 'DENY'), ('X-Content-Type-Options', 'nosniff'), ('Referrer-Policy', 'no-referrer'), ('Content-Security-Policy', "default-src 'self'; img-src 'self' https://likithasports.com data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")])
+        return [b'' if method == 'HEAD' else body]
     if method not in ('GET', 'HEAD'):
         status, content_type, body = '405 Method Not Allowed', 'text/plain; charset=utf-8', b'Method not allowed'
     elif path == '/':
@@ -144,7 +172,7 @@ def app(environ, start_response):
         if category not in (*CATEGORIES, 'all'):
             status, content_type, body = '400 Bad Request', 'application/json', b'{"error":"Unknown category"}'
         else:
-            items = find_services(term, category)
+            items = find_services(term, category, cms.published_services(cms.load_content()))
             status, content_type, body = '200 OK', 'application/json; charset=utf-8', json.dumps({'services': items, 'count': len(items)}, ensure_ascii=False).encode('utf-8')
     elif path == '/logo.png':
         status, content_type, body = '200 OK', 'image/png', LOGO_PATH.read_bytes()
