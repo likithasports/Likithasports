@@ -31,11 +31,44 @@ PAGE = r'''<!doctype html>
 @media(prefers-reduced-motion:reduce){.reveal{animation:none}}
 
 
-/* Hero composition: stable copy, generous image space and thumb-friendly controls. */
-.hero{background:linear-gradient(120deg,#f3f6fa 0%,#fff 65%);padding:52px 0 62px}.hero-grid{grid-template-columns:1fr 1.12fr;gap:54px}.hero-intro{padding:18px 0}.hero h1{font-size:clamp(44px,4.6vw,66px);letter-spacing:-3px}.hero-copy{font-size:17px;line-height:1.75}.hero-note{flex-wrap:wrap}.visual{padding:0}.visual:before{content:none}
-@media(max-width:1000px){.hero-grid{gap:28px}.photo{height:480px}.photo-tag{font-size:8px}.slide-number{font-size:9px}}
-@media(max-width:720px){.hero{padding:26px 0 36px}.hero-grid{grid-template-columns:1fr;gap:28px}.hero-intro{padding:0}.hero h1{font-size:clamp(42px,11vw,60px)}.hero-copy{font-size:15px;max-width:440px}.hero-note{margin-top:24px}.visual{padding:0;border-radius:12px}.photo{height:390px}.photo-bottom{bottom:25px;left:22px;right:22px}.photo-bottom h2{font-size:32px}.photo-tag{top:20px;left:20px}.slide-number{top:20px;right:20px}.carousel-bar{padding:10px 12px;gap:4px}.slide-dots{gap:0}.dot{min-width:24px;width:24px}.dot:after{width:14px}.carousel-arrows{gap:3px}.carousel-arrow{min-width:44px}.pause{min-width:58px;padding:0 8px}}
-@media(max-width:380px){.hero .wrap{padding-left:16px;padding-right:16px}.photo{height:360px}.photo-bottom h2{font-size:28px}.carousel-bar{flex-wrap:wrap}.slide-dots{order:3;width:100%;justify-content:center}.slide-number{font-size:8px}}
+/* A full-width desktop banner, with a compact stacked layout on phones. */
+.hero{background:var(--pale);padding:24px 0 32px}
+.hero-grid{max-width:1440px;display:grid;grid-template-columns:minmax(0,1fr);gap:0;align-items:stretch}
+.hero-intro,.hero-grid>.visual{grid-area:1/1;min-width:0}
+.hero-intro{position:relative;z-index:3;align-self:center;width:55%;padding:36px clamp(28px,4vw,60px);margin-bottom:69px;color:white}
+.hero h1{font-size:clamp(38px,4.6vw,66px);line-height:1.06;letter-spacing:-2.5px;color:white;margin-bottom:20px;overflow-wrap:anywhere}
+.hero h1 span{color:#75e786}.hero .eyebrow{color:#b9f4c2;margin-bottom:20px}
+.hero-copy{font-size:16px;line-height:1.65;color:#e0e7f5;max-width:420px;margin:0 0 24px}
+.hero .btn.outline{color:white;border-color:#ffffff80}.hero .btn.outline:hover{background:#ffffff18}
+.hero-note{border-color:#ffffff30;color:#d2ddf0;flex-wrap:wrap;margin-top:26px;gap:10px 18px}
+.hero-note span:before{color:#75e786}
+.hero-grid>.visual{padding:0;display:grid;grid-template-rows:minmax(0,1fr) auto;border-radius:14px;box-shadow:0 12px 36px #0b1e5518}
+.visual:before{content:none}.hero .photo{height:auto;min-height:clamp(370px,60svh,580px);border-radius:0}
+.hero .photo>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.hero .photo:after{background:linear-gradient(90deg,#071537f2 0%,#071537cf 40%,#07153712 85%),linear-gradient(0deg,#071537de,transparent 70%)}
+.hero .photo-tag{left:auto;right:28px;top:24px}.hero .slide-number{right:28px;top:74px}
+.hero .photo-bottom{left:auto;right:28px;bottom:26px;width:36%;max-width:430px}
+.hero .photo-bottom h2{font-size:clamp(24px,2.5vw,34px);margin:0 0 12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.hero .photo-bottom p{margin-bottom:10px}.hero .hero-discover{font-size:11px}
+.hero .carousel-bar{min-width:0;flex-wrap:wrap;gap:8px;padding:12px 20px}
+.hero .carousel-bar[hidden]{display:none}.hero .slide-dots{min-width:0;flex-wrap:wrap;justify-content:center}
+@media(max-width:1000px) and (min-width:721px){.hero-intro{padding:28px;width:57%}.hero .photo-bottom{width:34%}.hero .photo{min-height:440px}.hero-copy{font-size:14px}.hero .actions{gap:8px}.hero .actions .btn{padding:12px 15px;gap:12px}.hero-note{font-size:10px}.hero .photo-tag{font-size:8px}}
+@media(max-width:720px){
+ .hero{padding:14px 0 22px}.hero-grid{display:flex;flex-direction:column;gap:0}
+ .hero-intro{width:100%;align-self:stretch;margin:0;padding:24px;background:var(--navy);border-radius:12px 12px 0 0}
+ .hero h1{font-size:clamp(30px,8.5vw,44px);line-height:1.08;letter-spacing:-1.5px;margin-bottom:12px;max-width:none}
+ .hero .eyebrow{font-size:9px;letter-spacing:1.4px;margin-bottom:14px}.hero-copy{font-size:13px;line-height:1.6;max-width:none;margin-bottom:16px}
+ .hero .actions{gap:8px}.hero .actions .btn{min-height:44px;padding:10px 13px;gap:12px;font-size:11px}
+ .hero-note{display:none}.hero-grid>.visual{border-radius:0 0 12px 12px;box-shadow:none}
+ .hero .photo{height:clamp(240px,35svh,330px);min-height:0}
+ .hero .photo:after{background:linear-gradient(180deg,#07153725,transparent 20%,#071537e8 100%)}
+ .hero .photo-tag{top:16px;left:18px;right:auto;font-size:8px;padding:7px 9px}.hero .slide-number{top:16px;right:18px;font-size:9px;padding:7px 0}
+ .hero .photo-bottom{left:18px;right:18px;bottom:16px;width:auto;max-width:none}
+ .hero .photo-bottom h2{font-size:25px;line-height:1.12;margin-bottom:6px;-webkit-line-clamp:2}.hero .photo-bottom p{font-size:9px;margin-bottom:7px}.hero .hero-discover{min-height:36px}
+ .hero .carousel-bar{padding:10px 12px;gap:4px}.hero .carousel-arrows{gap:3px}.hero .carousel-arrow{min-width:44px}
+ .hero .slide-dots{gap:0;order:0;width:auto}.hero .dot{min-width:24px;width:24px}.hero .dot:after{width:14px}.hero .pause{min-width:58px;padding:0 8px}
+}
+@media(max-width:380px){.hero .wrap{padding-left:12px;padding-right:12px}.hero-intro{padding:20px 18px}.hero h1{font-size:30px}.hero .slide-dots{order:3;width:100%}.hero .photo-bottom h2{font-size:23px}}
 </style></head>
 <body><a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap"><span>SPORTS SURFACES & SPORTS SUPPLIERS</span><span class="location">Built for schools. Academies. Communities.</span><a href="tel:+918179655506">Call +91 81796 55506 ↗</a></div></div>
