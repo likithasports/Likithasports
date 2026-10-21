@@ -43,3 +43,16 @@ Content editing is intended for a small owner-managed site. There is one admin p
 ### Checks
 
 Run `python -m unittest discover -s tests -v`. Tests use an isolated temporary storage adapter enabled through `CMS_TEST_DIR`; the adapter is ignored on Vercel. The production app always uses Vercel Blob. `CMS_DEV_SETUP=1` is a local testing option and is not deployed.
+
+## Tailwind CSS
+
+Tailwind CSS v4 is compiled with the CLI and loaded by the homepage, service pages and content dashboard. Python remains the application runtime. Prefixed utilities (`tw:flex`, `tw:gap-3`) avoid collisions with existing CSS; Preflight is omitted to preserve the current design. Brand theme utilities include `tw:text-brand-navy` and `tw:bg-brand-green`.
+
+```sh
+npm ci
+npm run build:css
+# Or rebuild automatically while editing Python templates:
+npm run dev:css
+```
+
+Use complete, literal utility class names in `app.py` or `dashboard.py` so the scanner can detect them. Add other template paths with `@source` in `styles/tailwind.css` as needed. Run `npm run build:css` and commit the generated `assets/tailwind.css` after changing classes or theme settings. The committed CSS is explicitly served by Vercel's static builder, so the existing Python deployment does not need Node.js or a runtime CDN. Local Python/Gunicorn serves the same CSS path. Bump the stylesheet query version in both templates when updating the compiled stylesheet for cache invalidation.
