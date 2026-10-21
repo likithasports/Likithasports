@@ -56,3 +56,7 @@ npm run dev:css
 ```
 
 Use complete, literal utility class names in `app.py` or `dashboard.py` so the scanner can detect them. Add other template paths with `@source` in `styles/tailwind.css` as needed. Run `npm run build:css` and commit the generated `assets/tailwind.css` after changing classes or theme settings. The committed CSS is explicitly served by Vercel's static builder, so the existing Python deployment does not need Node.js or a runtime CDN. Local Python/Gunicorn serves the same CSS path. Bump the stylesheet query version in both templates when updating the compiled stylesheet for cache invalidation.
+
+### Operator-managed login reset
+
+`CMS_ADMIN_CREDENTIALS` is an optional server-only Secret configuration containing `username`, a 16-byte hexadecimal `salt`, the existing PBKDF2-SHA256 `password` hash (600,000 iterations), and a fresh 32-byte hexadecimal session `key`. Set it through Vercel environment configuration, never in source files. When present, this credential record takes precedence over the legacy Blob login and requires both username and password. A new key invalidates existing sessions on the updated deployment. Malformed configuration fails closed. No content or uploaded images are deleted. Without this variable, the original password-only setup/login continues to work. Scope the reset to the intended environment/branch and deploy again to apply it; existing immutable deployments retain their earlier configuration. Removing the variable re-enables the legacy Blob credentials.
