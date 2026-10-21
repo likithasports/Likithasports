@@ -246,7 +246,7 @@ def handle(environ, start_response):
                 return response(start_response, 405, {'error': 'Use GET.'}, [('Allow', 'GET')])
             record = admin_record()
             session = session_for(environ, record)
-            return response(start_response, 200, {'configured': bool(record), 'authenticated': bool(session), 'csrf': session['csrf'] if session else None, 'setup_allowed': bool(setup_allowed(environ))})
+            return response(start_response, 200, {'configured': bool(record), 'authenticated': bool(session), 'csrf': session['csrf'] if session else None, 'setup_allowed': bool(setup_allowed(environ)), 'setup_url': os.environ.get('CMS_SETUP_URL') if not record else None})
         if path == '/api/admin/content' and method == 'GET':
             if not session_for(environ, admin_record()):
                 raise CmsError('Sign in to manage website content.', 401)
