@@ -60,3 +60,9 @@ Use complete, literal utility class names in `app.py` or `dashboard.py` so the s
 ### Operator-managed login reset
 
 `CMS_ADMIN_CREDENTIALS` is an optional server-only Secret configuration containing `username`, a 16-byte hexadecimal `salt`, the existing PBKDF2-SHA256 `password` hash (600,000 iterations), and a fresh 32-byte hexadecimal session `key`. Set it through Vercel environment configuration, never in source files. When present, this credential record takes precedence over the legacy Blob login and requires both username and password. A new key invalidates existing sessions on the updated deployment. Malformed configuration fails closed. No content or uploaded images are deleted. Without this variable, the original password-only setup/login continues to work. Scope the reset to the intended environment/branch and deploy again to apply it; existing immutable deployments retain their earlier configuration. Removing the variable re-enables the legacy Blob credentials.
+
+## Website navigation
+
+Header and footer links provide Home, About Us, Services, Clients, Projects and Contact destinations on the homepage. Service detail pages link back to those homepage sections. The navigation highlights the current hash destination and collapses into a scrollable menu on tablet/phone widths; selecting a link or pressing Escape closes it.
+
+Clients describes school/campus, academy/club and community audiences. The Projects gallery links to up to three published sports solutions, prioritising service images uploaded through the dashboard. Unpublished solutions are excluded; solutions without images use the existing sport illustrations. Uploaded `/media/` paths use the same URL resolver as service cards and detail pages.
