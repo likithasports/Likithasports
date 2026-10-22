@@ -16,7 +16,7 @@ The checked-in `vercel.json` explicitly packages `app.py` with `@vercel/python` 
 
 Routes: `/`, `/logo.png`, `/healthz`, `/robots.txt`; unknown routes return 404. GET and HEAD are supported; other methods return 405.
 
-The three-slide carousel runs automatically every three seconds, has manual slide and pause controls, and pauses in hidden browser tabs. Category filters and service links populate the WhatsApp enquiry composer. No enquiry is stored or sent automatically by this app.
+The hero fills the page content width on desktop, with a responsive image stage and overlaid introduction. On phones, the introduction sits above a shorter image stage and controls wrap within the available width. The hero carousel uses dashboard-managed slides (one to six), rotates every six seconds, and provides previous/next buttons, slide selectors, keyboard arrows, touch swipes, and pause/play. It pauses on hover and in hidden browser tabs; focus entry or manual navigation stops rotation until Play is chosen. Reduced-motion users start with autoplay off and receive no transitions. The headline and enquiry actions remain stationary. With JavaScript disabled, the first slide stays visible and inactive controls stay hidden. Category filters and service links populate the WhatsApp enquiry composer. No enquiry is stored or sent automatically by this app.
 
 Images are currently hosted at https://likithasports.com/. Contact details follow the existing website. No additional certification claims or project statistics have been added; the supplied logo is displayed as provided.
 
@@ -43,3 +43,28 @@ Content editing is intended for a small owner-managed site. There is one admin p
 ### Checks
 
 Run `python -m unittest discover -s tests -v`. Tests use an isolated temporary storage adapter enabled through `CMS_TEST_DIR`; the adapter is ignored on Vercel. The production app always uses Vercel Blob. `CMS_DEV_SETUP=1` is a local testing option and is not deployed.
+
+## Tailwind CSS
+
+Tailwind CSS v4 is compiled with the CLI and loaded by the homepage, service pages and content dashboard. Python remains the application runtime. Prefixed utilities (`tw:flex`, `tw:gap-3`) avoid collisions with existing CSS; Preflight is omitted to preserve the current design. Brand theme utilities include `tw:text-brand-navy` and `tw:bg-brand-green`.
+
+```sh
+npm ci
+npm run build:css
+# Or rebuild automatically while editing Python templates:
+npm run dev:css
+```
+
+Use complete, literal utility class names in `app.py` or `dashboard.py` so the scanner can detect them. Add other template paths with `@source` in `styles/tailwind.css` as needed. Run `npm run build:css` and commit the generated `assets/tailwind.css` after changing classes or theme settings. The committed CSS is explicitly served by Vercel's static builder, so the existing Python deployment does not need Node.js or a runtime CDN. Local Python/Gunicorn serves the same CSS path. Bump the stylesheet query version in both templates when updating the compiled stylesheet for cache invalidation.
+
+### Operator-managed login reset
+
+`CMS_ADMIN_CREDENTIALS` is an optional server-only Secret configuration containing `username`, a 16-byte hexadecimal `salt`, the existing PBKDF2-SHA256 `password` hash (600,000 iterations), and a fresh 32-byte hexadecimal session `key`. Set it through Vercel environment configuration, never in source files. When present, this credential record takes precedence over the legacy Blob login and requires both username and password. A new key invalidates existing sessions on the updated deployment. Malformed configuration fails closed. No content or uploaded images are deleted. Without this variable, the original password-only setup/login continues to work. Scope the reset to the intended environment/branch and deploy again to apply it; existing immutable deployments retain their earlier configuration. Removing the variable re-enables the legacy Blob credentials.
+
+## Website navigation
+
+Header and footer links provide Home, About Us, Services, Clients, Projects and Contact destinations on the homepage. Service detail pages link back to those homepage sections. The navigation highlights the current hash destination and collapses into a scrollable menu on tablet/phone widths; selecting a link or pressing Escape closes it.
+
+Clients describes school/campus, academy/club and community audiences. The Projects gallery links to up to three published sports solutions, prioritising service images uploaded through the dashboard. Unpublished solutions are excluded; solutions without images use the existing sport illustrations. Uploaded `/media/` paths use the same URL resolver as service cards and detail pages.
+
+About Us includes six capability cards in a wrapping Flexbox layout: three columns on desktop, two on tablets and one on phones. Cards cover planning, surfaces, construction, fencing/netting, lighting/equipment and installation.

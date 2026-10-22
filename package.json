@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "tailwindcss": "4.3.3"
+  },
+  "name": "likitha-sports-styles",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:css",
+    "build:css": "tailwindcss -i ./styles/tailwind.css -o ./assets/tailwind.css --minify",
+    "dev:css": "tailwindcss -i ./styles/tailwind.css -o ./assets/tailwind.css --watch"
+  }
+}

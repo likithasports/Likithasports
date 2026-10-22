@@ -8,9 +8,17 @@
     {
       "src": "assets/logo-transparent.png",
       "use": "@vercel/static"
+    },
+    {
+      "src": "assets/tailwind.css",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/assets/tailwind.css",
+      "dest": "/assets/tailwind.css"
+    },
     {
       "src": "/logo.png",
       "dest": "/assets/logo-transparent.png"
