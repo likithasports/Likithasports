@@ -66,3 +66,5 @@ Use complete, literal utility class names in `app.py` or `dashboard.py` so the s
 Header and footer links provide Home, About Us, Services, Clients, Projects and Contact destinations on the homepage. Service detail pages link back to those homepage sections. The navigation highlights the current hash destination and collapses into a scrollable menu on tablet/phone widths; selecting a link or pressing Escape closes it.
 
 Clients describes school/campus, academy/club and community audiences. The Projects gallery links to up to three published sports solutions, prioritising service images uploaded through the dashboard. Unpublished solutions are excluded; solutions without images use the existing sport illustrations. Uploaded `/media/` paths use the same URL resolver as service cards and detail pages.
+
+About Us includes six capability cards in a wrapping Flexbox layout: three columns on desktop, two on tablets and one on phones. Cards cover planning, surfaces, construction, fencing/netting, lighting/equipment and installation.
