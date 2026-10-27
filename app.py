@@ -114,7 +114,7 @@ PAGE = r'''<!doctype html>
 .profile-photo svg{width:38%;max-width:140px;stroke:var(--navy);stroke-width:3;stroke-linecap:round;opacity:.35}
 .profile-photo img{width:100%;height:100%;object-fit:contain}.profile-photo:has(img){display:block}
 .profile-photo span{font-size:12px}
-.profile-details{padding:24px}
+.profile-details{padding:24px;text-align:center}
 .profile-label{display:block;font-size:10px;font-weight:700;letter-spacing:1.6px;color:var(--darkgreen);margin-bottom:12px}
 .about .profile-details h4{margin-bottom:6px}
 @media(max-width:580px){.profile-details{padding:22px}}
