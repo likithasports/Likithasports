@@ -74,6 +74,23 @@ class DashboardFlow(unittest.TestCase):
   data=cms.load_content();data['services'][0]['image']='https://evil.example/image.png';self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],400)
   data=cms.load_content();data['services'][0]['slug']='../../auth/admin';self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],400)
   self.assertNotIn('password',json.dumps(self.request('/api/services')[1]))
+ def test_project_gallery_upload_publish_and_visibility(self):
+  self.setup_owner()
+  image=Image.new('RGB',(1600,900),'green');out=io.BytesIO();image.save(out,'PNG')
+  status,uploaded,_=self.request('/api/admin/upload','POST',{'data':base64.b64encode(out.getvalue()).decode(),'project_square':True},auth=True)
+  self.assertEqual(status,201)
+  delivered=self.request(uploaded['url'])[1]
+  self.assertEqual(Image.open(io.BytesIO(delivered)).size,(1080,1080))
+  data=self.request('/api/admin/content',auth=True)[1]
+  data['projects']=[{'title':'Our <court>','summary':'A square gallery','images':[uploaded['url'],'tennis.webp'],'published':True},{'title':'Hidden project','summary':'Private draft','images':[],'published':False}]
+  self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],200)
+  saved=self.request('/api/admin/content',auth=True)[1]
+  self.assertEqual(saved['projects'][0]['images'],[uploaded['url'],'tennis.webp'])
+  home=self.request('/')[1]
+  self.assertIn(b'Our &lt;court&gt;',home);self.assertIn(uploaded['url'].encode(),home)
+  self.assertIn(b'width="1080" height="1080"',home);self.assertNotIn(b'Hidden project',home)
+  saved['projects'][0]['images']=['https://invalid.example/photo.png']
+  self.assertEqual(self.request('/api/admin/content','POST',saved,auth=True)[0],400)
  def test_dashboard_and_logout(self):
   status,body,headers=self.request('/dashboard');self.assertEqual(status,200);self.assertEqual(headers['Cache-Control'],'no-store');self.assertIn('noindex',headers['X-Robots-Tag'])
   self.setup_owner();self.assertEqual(self.request('/api/admin/logout','POST',{},auth=True)[0],200);self.assertFalse(self.request('/api/admin/status',auth=True)[1]['authenticated'])
@@ -82,3 +99,4 @@ class DashboardFlow(unittest.TestCase):
   for _ in range(10):self.assertEqual(self.request('/api/admin/login','POST',{'password':'wrong'})[0],401)
   self.assertEqual(self.request('/api/admin/login','POST',{'password':'wrong'})[0],429)
 if __name__=='__main__':unittest.main()
+

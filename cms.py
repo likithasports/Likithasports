@@ -93,6 +93,13 @@ def load_content(strict=False):
         return defaults()
 
 
+def project_items(data):
+    if 'projects' in data:
+        return data['projects']
+    services = sorted(published_services(data), key=lambda item: not str(item.get('image') or '').startswith('/media/'))[:3]
+    return [{'title': item['title'], 'summary': item['summary'], 'images': [item['image']] if item.get('image') else [], 'published': True} for item in services]
+
+
 def published_services(data):
     return [s for s in data['services'] if s.get('published', True)]
 
@@ -155,6 +162,20 @@ def validate_content(raw):
         data['services'].append({'slug': slug, 'title': text(s.get('title'), 'Service title', 100), 'category': s['category'], 'summary': text(s.get('summary'), 'Service summary', 300), 'scope': [text(item, 'Scope item', 180) for item in scopes], 'prompt': text(s.get('prompt'), 'Project guidance', 300), 'image': image_value(s.get('image')), 'published': s['published']})
     if not any(s['published'] for s in data['services']):
         raise CmsError('Keep at least one service published.')
+    projects = raw.get('projects', project_items(raw))
+    if not isinstance(projects, list) or len(projects) > 50:
+        raise CmsError('Add up to fifty projects.')
+    data['projects'] = []
+    for project in projects:
+        if not isinstance(project, dict) or not isinstance(project.get('published'), bool):
+            raise CmsError('Invalid project.')
+        images = project.get('images')
+        if not isinstance(images, list) or len(images) > 50:
+            raise CmsError('Add up to fifty photos per project.')
+        data['projects'].append({'title': text(project.get('title'), 'Project title', 100),
+                                 'summary': text(project.get('summary'), 'Project description', 500, False),
+                                 'images': [image_value(image, True) for image in images],
+                                 'published': project['published']})
     return data
 
 
@@ -316,7 +337,7 @@ def handle(environ, start_response):
         if path == '/api/admin/logout':
             return response(start_response, 200, {'ok': True}, [('Set-Cookie', f'{COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict; Secure')])
         if path == '/api/admin/upload':
-            from PIL import Image
+            from PIL import Image, ImageOps
             try:
                 raw = base64.b64decode(data.get('data', ''), validate=True)
             except (ValueError, TypeError):
@@ -331,6 +352,14 @@ def handle(environ, start_response):
                     image.verify()
             except Exception:
                 raise CmsError('Choose a PNG, JPEG or WebP image under 20 megapixels.')
+            if data.get('project_square') is True:
+                with Image.open(io.BytesIO(raw)) as image:
+                    fitted = ImageOps.contain(ImageOps.exif_transpose(image).convert('RGBA'), (1080, 1080), Image.Resampling.LANCZOS)
+                    square = Image.new('RGBA', (1080, 1080), 'white')
+                    square.alpha_composite(fitted, ((1080 - fitted.width) // 2, (1080 - fitted.height) // 2))
+                    output = io.BytesIO()
+                    square.convert('RGB').save(output, 'WEBP', quality=90)
+                    raw, fmt = output.getvalue(), 'WEBP'
             extension, mime = {'PNG': ('png', 'image/png'), 'JPEG': ('jpg', 'image/jpeg'), 'WEBP': ('webp', 'image/webp')}[fmt]
             pathname = 'media/' + secrets.token_hex(16) + '.' + extension
             write_object(pathname, raw, mime)
@@ -350,3 +379,4 @@ def handle(environ, start_response):
         return response(start_response, error.status, {'error': str(error)})
     except Exception:
         return response(start_response, 503, {'error': 'The storage service could not complete this request. Please retry.'})
+

@@ -93,6 +93,20 @@ PAGE = r'''<!doctype html>
 .about-box h4{font-size:20px;line-height:1.25;letter-spacing:-.4px;color:var(--navy);margin:0 0 12px}.about .about-box p{font-size:14px;line-height:1.65;margin:0;max-width:none}
 @media(max-width:900px){.about-box{flex-basis:calc((100% - 20px)/2);padding:24px}}
 @media(max-width:580px){.about-capabilities{margin-top:30px;padding-top:28px}.about-flex{gap:16px}.about-box{flex-basis:100%;padding:24px}.about-box-number{margin-bottom:16px}}
+
+/* Square project images and a single scrolling track for images and captions. */
+.projects .project-grid{display:flex;gap:24px;overflow-x:auto;scrollbar-width:thin;overscroll-behavior-x:contain;padding:4px 0 16px;direction:ltr}
+.projects .project-card{flex:0 0 calc((100% - 48px)/3);display:flex;flex-direction:column}
+.projects .project-photo,.projects .project-card .card-symbol{height:auto;aspect-ratio:1/1;width:100%;flex-shrink:0}
+.projects .project-photo{position:relative;display:grid;place-items:center}.projects .project-photo img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}.projects .project-photo img[hidden]{display:none}.project-placeholder{padding:24px;text-align:center;color:var(--muted);font-size:14px}
+.projects .project-copy{flex:1;display:flex;flex-direction:column}
+.projects .project-copy a{margin-top:auto}
+.projects .project-copy .project-summary{font-size:14px;line-height:1.6;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);margin:0 0 20px}
+.project-scroll-controls{display:flex;justify-content:flex-end;margin-bottom:16px}
+.project-scroll-controls button{min-height:44px;padding:9px 16px;border:1px solid var(--line);border-radius:4px;background:white;color:var(--navy);font-size:12px;font-weight:700}
+@media(max-width:1050px){.projects .project-card{flex-basis:calc((100% - 24px)/2)}}
+@media(max-width:720px){.projects .project-card{flex-basis:88%}.projects .project-grid{gap:16px}}
+
 </style></head>
 <body><a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap"><span>SPORTS SURFACES & SPORTS SUPPLIERS</span><span class="location">Built for schools. Academies. Communities.</span><a href="tel:+918179655506">Call +91 81796 55506 ↗</a></div></div>
@@ -103,7 +117,7 @@ PAGE = r'''<!doctype html>
 <section class="section" id="solutions"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Find your playing field</p><h2>Built for every kind of play.</h2></div><p>Spaces for everyday practice, community recreation and the next big match.</p></div><div class="search-tools"><form class="service-search" role="search" method="get" action="/#solutions"><label for="service-search">Find a sports solution</label><input id="service-search" name="q" type="search" maxlength="100" placeholder="Search courts, pools, tracks…" value=""><input id="category-value" type="hidden" name="category" value="all"><button class="search-submit" type="submit" aria-label="Search services">⌕</button></form><p class="results-count" id="results-count" role="status" aria-live="polite">9 solutions available</p></div><div class="filters" aria-label="Filter solutions"><button type="button" data-filter="all" aria-pressed="true">All solutions</button><button type="button" data-filter="court" aria-pressed="false">Courts</button><button type="button" data-filter="field" aria-pressed="false">Turfs & tracks</button><button type="button" data-filter="facility" aria-pressed="false">Facilities</button></div><div class="cards" id="service-cards">__SERVICE_CARDS__</div><div class="empty-state" id="empty-results" hidden><h3>No matching solutions</h3><p>Try a different search or choose another category.</p><button class="btn" id="reset-search" type="button">Show all solutions</button></div></div></section>
 <section class="section about" id="about"><div class="wrap"><div class="about-grid"><div><p class="eyebrow">About Us · From plan to play</p><h2>One partner.<br>Your whole sports space.</h2><p>We bring surfaces, construction and sports equipment together for schools, academies and communities.</p><a class="btn outline" href="#contact">Let’s build together <span aria-hidden="true">↗</span></a></div><div class="steps"><div class="step"><span>01</span><div><h3>Tell us your game plan</h3><p>Share your sport, site and project requirements.</p></div></div><div class="step"><span>02</span><div><h3>Find the right solution</h3><p>Discuss surface options, equipment and the scope of work.</p></div></div><div class="step"><span>03</span><div><h3>Bring your space to life</h3><p>Move forward with construction and installation.</p></div></div></div></div><div class="about-capabilities"><p class="eyebrow">Our capabilities</p><h3>From the first plan to the final installation.</h3></div><div class="about-flex" aria-label="Six ways we support your sports project"><article class="about-box"><span class="about-box-number" aria-hidden="true">01</span><h4>Project planning</h4><p>Share your sport, site size and requirements so the scope of work starts around your space.</p></article><article class="about-box"><span class="about-box-number" aria-hidden="true">02</span><h4>Sports surfaces</h4><p>Explore surfaces for courts, turfs and tracks, selected around the sport and intended use.</p></article><article class="about-box"><span class="about-box-number" aria-hidden="true">03</span><h4>Court construction</h4><p>Bring the base, playing area and supporting construction into one project discussion.</p></article><article class="about-box"><span class="about-box-number" aria-hidden="true">04</span><h4>Fencing & netting</h4><p>Plan boundaries, chain-link fencing and netting around your playing area.</p></article><article class="about-box"><span class="about-box-number" aria-hidden="true">05</span><h4>Lighting & equipment</h4><p>Discuss floodlights and sports equipment for your new or existing facility.</p></article><article class="about-box"><span class="about-box-number" aria-hidden="true">06</span><h4>Installation support</h4><p>Coordinate surface and equipment installation as your sports space takes shape.</p></article></div></div></section>
 <section class="section" id="clients" aria-labelledby="clients-heading"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Our clients · Who we build for</p><h2 id="clients-heading">Different communities.<br>The same love of sport.</h2></div><p>Sports spaces planned around the people who use them, from everyday practice to community play.</p></div><div class="client-grid"><article class="client-group"><span class="client-number" aria-hidden="true">01</span><h3>Schools & campuses</h3><p>Playing areas, courts and sports equipment for learning, practice and recreation.</p><a href="/#contact">Discuss a school project <span aria-hidden="true">↗</span></a></article><article class="client-group"><span class="client-number" aria-hidden="true">02</span><h3>Academies & clubs</h3><p>Surfaces and supporting infrastructure planned around your sport and training needs.</p><a href="/#contact">Plan a training space <span aria-hidden="true">↗</span></a></article><article class="client-group"><span class="client-number" aria-hidden="true">03</span><h3>Residential communities</h3><p>Sports and recreation spaces for shared activity, neighbourhood games and everyday use.</p><a href="/#contact">Explore community spaces <span aria-hidden="true">↗</span></a></article></div></div></section>
-<section class="section projects" id="projects" aria-labelledby="projects-heading"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Projects · Explore the possibilities</p><h2 id="projects-heading">Your next project starts here.</h2></div><p>Explore our sports solutions, then share your site, sport and project requirements.</p></div><div class="project-grid">__PROJECT_CARDS__</div><div class="project-actions"><a class="btn outline" href="/#solutions">View all sports solutions <span aria-hidden="true">↗</span></a><a class="btn" href="/#contact">Discuss your project <span aria-hidden="true">↗</span></a></div></div></section>
+<section class="section projects" id="projects" aria-labelledby="projects-heading"><div class="wrap"><div class="section-head"><div><p class="eyebrow">Projects · Explore the possibilities</p><h2 id="projects-heading">Your next project starts here.</h2></div><p>Explore our sports solutions, then share your site, sport and project requirements.</p></div><div class="project-scroll-controls"><button type="button" id="project-pause" aria-controls="project-track" aria-pressed="false">Pause project scrolling</button></div><div class="project-grid" id="project-track" tabindex="0" role="region" aria-label="Project cards; scroll to explore">__PROJECT_CARDS__</div><div class="project-actions"><a class="btn outline" href="/#solutions">View all sports solutions <span aria-hidden="true">↗</span></a><a class="btn" href="/#contact">Discuss your project <span aria-hidden="true">↗</span></a></div></div></section>
 <section class="section" id="faq"><div class="wrap faq-grid"><div><p class="eyebrow">A little more clarity</p><h2>Before we get<br>the game going.</h2></div><div class="faq-list"><details><summary>What should I share for a project enquiry?</summary><p>Your location, available area, sport, intended use and preferred timeline help us understand the project. You can add these details to the enquiry form below.</p></details><details><summary>Can I combine different sports in one space?</summary><p>Multi-sport options can be discussed around your available area and intended games. Explore our pickleball and multi-sport court solution, then share your requirements with the team.</p></details><details><summary>Can I enquire about equipment or lighting only?</summary><p>Yes. Choose fencing, lighting and equipment in the enquiry form and describe what you need for your existing or proposed space.</p></details><details><summary>How do I get a project quote?</summary><p>Choose a solution, fill in your project details and continue to WhatsApp. Review the prepared message and send it to begin the discussion. Pricing and timelines depend on your project requirements.</p></details></div></div></section>
 <section class="section contact" id="contact"><div class="wrap contact-grid"><div><p class="eyebrow">Let’s get the ball rolling</p><h2>Your next great<br>game starts here.</h2><p class="contact-copy">Have a site in mind? Tell us what you want to build. We’ll help you take the next step.</p><div class="contact-details"><small>CALL OUR TEAM</small><a href="tel:+918179655506">+91 81796 55506 ↗</a><small>WRITE TO US</small><a class="email" href="mailto:infolikithasports@gmail.com">infolikithasports@gmail.com ↗</a></div></div><form id="enquiry"><div><label for="name">Your name *</label><input id="name" name="name" autocomplete="name" maxlength="100" required placeholder="Full name"></div><div><label for="phone">Phone number *</label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="30" required placeholder="Your phone number"></div><div><label for="location">Project location *</label><input id="location" name="location" autocomplete="address-level2" maxlength="150" required placeholder="City / area"></div><div><label for="sport">Interested in</label><select id="sport" name="sport"><option>Basketball courts</option><option>Tennis courts (Outdoor)</option><option>Football turf & box cricket</option><option>Athletic Track</option><option>Beach volleyball</option><option>Swimming pool</option><option>Indoor Stadium (Construction)</option><option>Pickleball & multi-sport courts</option><option>Fencing, lighting & equipment</option><option>Other sports infrastructure</option></select></div><div class="full"><label for="message">Tell us about your project</label><textarea id="message" name="message" maxlength="2000" placeholder="Site size, preferred timeline, or anything we should know…"></textarea></div><button type="submit" class="btn green full">Continue to WhatsApp <span aria-hidden="true">↗</span></button><p class="fine full">Review and send your enquiry in WhatsApp. Your details are not stored on this website.</p></form></div></section>
 </main><footer><div class="wrap"><div class="footer-top"><a href="/" aria-label="Likitha Sports home"><img class="logo" src="/logo.png?v=2" width="300" height="100" alt="Likitha Sports Surfaces & Sports Suppliers" loading="lazy"></a><nav class="footer-links" aria-label="Footer navigation"><a data-nav href="/#home">Home</a><a data-nav href="/#about">About Us</a><a data-nav href="/#solutions">Services</a><a data-nav href="/#clients">Clients</a><a data-nav href="/#projects">Projects</a><a data-nav href="/#contact">Contact</a></nav></div><div class="footer-bottom"><span>© <span id="year">2026</span> Likitha Sports. All rights reserved.</span><span>Sports surfaces. Stronger possibilities.<a class="top-link" href="#main">Back to top ↑</a></span></div></div></footer><a class="whatsapp" href="https://wa.me/918179655506" target="_blank" rel="noopener noreferrer">Chat on WhatsApp ↗</a>
@@ -145,6 +159,64 @@ document.addEventListener('visibilitychange',schedule);
 img.addEventListener('load',()=>{img.style.visibility='visible'});img.addEventListener('error',()=>{img.style.visibility='hidden'});if(img.complete&&!img.naturalWidth)img.style.visibility='hidden';
 schedule();
 }
+
+const projectTrack=document.getElementById('project-track');
+if(projectTrack){
+  const pauseButton=document.getElementById('project-pause');
+  const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const originals=[...projectTrack.children];
+  let paused=motion.matches,hovered=false,focused=false,dragging=false,lastTime=0,photoElapsed=0,position=0;
+  const canScroll=originals.length>1;
+  const hasPhotos=originals.some(card=>card.querySelectorAll('[data-project-gallery] img').length>1);
+  if(canScroll){
+    originals.forEach(card=>{
+      const copy=card.cloneNode(true);
+      copy.setAttribute('aria-hidden','true');
+      copy.setAttribute('inert','');
+      copy.dataset.projectClone='true';
+      projectTrack.appendChild(copy);
+    });
+  }
+  function updateProjectControl(){
+    pauseButton.disabled=!canScroll&&!hasPhotos;
+    pauseButton.textContent=paused?'Play project scrolling':'Pause project scrolling';
+    pauseButton.setAttribute('aria-pressed',String(paused));
+  }
+  pauseButton.addEventListener('click',()=>{paused=!paused;updateProjectControl()});
+  projectTrack.addEventListener('mouseenter',()=>{hovered=true});
+  projectTrack.addEventListener('mouseleave',()=>{hovered=false});
+  projectTrack.addEventListener('focusin',()=>{focused=true});
+  projectTrack.addEventListener('focusout',event=>{focused=projectTrack.contains(event.relatedTarget)});
+  projectTrack.addEventListener('pointerdown',()=>{dragging=true});
+  window.addEventListener('pointerup',()=>{dragging=false});
+  window.addEventListener('pointercancel',()=>{dragging=false});
+  motion.addEventListener('change',()=>{paused=motion.matches;updateProjectControl()});
+  document.addEventListener('visibilitychange',()=>{lastTime=0});
+  function advanceProjects(time){
+    const elapsed=lastTime?Math.min(time-lastTime,50):0;
+    lastTime=time;
+    if(!paused&&!hovered&&!focused&&!dragging&&!document.hidden){
+      if(canScroll){
+        const loopWidth=projectTrack.querySelector('[data-project-clone]').offsetLeft-originals[0].offsetLeft;
+        if(loopWidth>0){position=(position+elapsed*.035)%loopWidth;projectTrack.scrollLeft=position;}
+      }
+      photoElapsed+=elapsed;
+      if(photoElapsed>=3000){
+        photoElapsed=0;
+        projectTrack.querySelectorAll('[data-project-gallery]').forEach(gallery=>{
+          const photos=[...gallery.querySelectorAll('img')];
+          if(photos.length<2)return;
+          const current=photos.findIndex(photo=>!photo.hidden);
+          photos.forEach((photo,i)=>{photo.hidden=i!==(current+1)%photos.length});
+        });
+      }
+    }else{position=projectTrack.scrollLeft;}
+    requestAnimationFrame(advanceProjects);
+  }
+  updateProjectControl();
+  requestAnimationFrame(advanceProjects);
+}
+
 const search=document.getElementById('service-search');
 if(search){const filterButtons=[...document.querySelectorAll('[data-filter]')],cards=[...document.querySelectorAll('.card')],params=new URLSearchParams(location.search);let category=params.get('category')||'all';if(!filterButtons.some(b=>b.dataset.filter===category))category='all';search.value=(params.get('q')||'').slice(0,100);
 function filterServices(updateUrl=true){const terms=search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);let visible=0;cards.forEach(card=>{const match=(category==='all'||card.dataset.category===category)&&terms.every(term=>card.dataset.search.includes(term));card.hidden=!match;if(match)visible++});filterButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===category)));document.getElementById('category-value').value=category;document.getElementById('results-count').textContent=visible+' '+(visible===1?'solution':'solutions')+' found';document.getElementById('empty-results').hidden=visible!==0;if(updateUrl){const url=new URL(location.href);if(search.value.trim())url.searchParams.set('q',search.value.trim());else url.searchParams.delete('q');if(category!=='all')url.searchParams.set('category',category);else url.searchParams.delete('category');history.replaceState(null,'',url.pathname+url.search+url.hash)}}
@@ -188,14 +260,14 @@ def home_page(query_string='', content=None):
     matches = {s['slug'] for s in find_services(query, category, services)}
     cards = ''.join(render_card(s, i, s['slug'] in matches) for i, s in enumerate(services, 1))
     page = PAGE.replace('__SERVICE_CARDS__', cards)
-    # Feature published solutions; favour the owner's uploaded imagery.
-    featured = sorted(services, key=lambda item: not str(item.get('image') or '').startswith('/media/'))[:3]
     project_cards = []
-    for i, item in enumerate(featured, 1):
+    for item in cms.project_items(content):
+        if not item.get('published', True):
+            continue
         title = escape(item['title'])
-        image = cms.image_url(item.get('image'))
-        visual = ('<div class="project-photo"><img src="' + escape(image, quote=True) + '" alt="' + title + '" width="600" height="400" loading="lazy"></div>') if image else service_icon(item['category'], i)
-        project_cards.append('<article class="project-card">' + visual + '<div class="project-copy"><p>' + escape(CATEGORIES[item['category']]) + '</p><h3>' + title + '</h3><a href="/services/' + escape(item['slug'], quote=True) + '">Explore project options <span aria-hidden="true">↗</span></a></div></article>')
+        photos = ''.join('<img src="' + escape(cms.image_url(image), quote=True) + '" alt="' + title + ' — photo ' + str(i + 1) + '" width="1080" height="1080" loading="lazy"' + ('' if i == 0 else ' hidden') + '>' for i, image in enumerate(item['images']))
+        visual = '<div class="project-photo" data-project-gallery>' + (photos or '<span class="project-placeholder">Project photos coming soon</span>') + '</div>'
+        project_cards.append('<article class="project-card">' + visual + '<div class="project-copy"><h3>' + title + '</h3><p class="project-summary">' + escape(item['summary']) + '</p></div></article>')
     page = page.replace('__PROJECT_CARDS__', ''.join(project_cards))
     page = page.replace('placeholder="Search courts, pools, tracks…" value=""', 'placeholder="Search courts, pools, tracks…" value="' + escape(query, quote=True) + '"')
     page = page.replace('name="category" value="all"', 'name="category" value="' + category + '"')
@@ -299,3 +371,4 @@ def app(environ, start_response):
 if __name__ == '__main__':
     with make_server('0.0.0.0', int(os.environ.get('PORT', '8000')), app) as server:
         server.serve_forever()
+
