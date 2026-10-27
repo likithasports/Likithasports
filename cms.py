@@ -100,6 +100,10 @@ def project_items(data):
     return [{'title': item['title'], 'summary': item['summary'], 'images': [item['image']] if item.get('image') else [], 'published': True} for item in services]
 
 
+def profile_items(data):
+    return data.get('profiles', [{'name': '', 'role': '', 'image': None} for _ in range(6)])
+
+
 def published_services(data):
     return [s for s in data['services'] if s.get('published', True)]
 
@@ -176,6 +180,16 @@ def validate_content(raw):
                                  'summary': text(project.get('summary'), 'Project description', 500, False),
                                  'images': [image_value(image, True) for image in images],
                                  'published': project['published']})
+    profiles = profile_items(raw)
+    if not isinstance(profiles, list) or len(profiles) != 6:
+        raise CmsError('Keep exactly six About Us profiles.')
+    data['profiles'] = []
+    for profile in profiles:
+        if not isinstance(profile, dict):
+            raise CmsError('Invalid About Us profile.')
+        data['profiles'].append({'name': text(profile.get('name'), 'Profile name', 100, False),
+                                 'role': text(profile.get('role'), 'Profile role', 100, False),
+                                 'image': image_value(profile.get('image'))})
     return data
 
 
@@ -379,4 +393,3 @@ def handle(environ, start_response):
         return response(start_response, error.status, {'error': str(error)})
     except Exception:
         return response(start_response, 503, {'error': 'The storage service could not complete this request. Please retry.'})
-

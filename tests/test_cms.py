@@ -67,6 +67,30 @@ class DashboardFlow(unittest.TestCase):
   home=self.request('/')[1]
   self.assertIn(('src="'+data['url']+'"').encode(),home)
   self.assertNotIn(('https://likithasports.com/assets/home/'+data['url']).encode(),home)
+ def test_about_profile_upload_publish_and_remove(self):
+  self.setup_owner()
+  data=self.request('/api/admin/content',auth=True)[1]
+  self.assertEqual(len(cms.profile_items(data)),6)
+  image=Image.new('RGB',(400,600),'navy');out=io.BytesIO();image.save(out,'PNG')
+  status,uploaded,_=self.request('/api/admin/upload','POST',{'data':base64.b64encode(out.getvalue()).decode(),'project_square':True},auth=True)
+  self.assertEqual(status,201)
+  self.assertEqual(Image.open(io.BytesIO(self.request(uploaded['url'])[1])).size,(1080,1080))
+  data['profiles']=cms.profile_items(data)
+  data['profiles'][0]={'name':'Team <member>','role':'Engineer & planner','image':uploaded['url']}
+  self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],200)
+  saved=self.request('/api/admin/content',auth=True)[1]
+  self.assertEqual(saved['profiles'][0]['image'],uploaded['url'])
+  home=self.request('/')[1]
+  self.assertEqual(home.count(b'about-box profile-card'),6)
+  self.assertIn(b'Team &lt;member&gt;',home);self.assertIn(b'Engineer &amp; planner',home)
+  self.assertIn(('src="'+uploaded['url']+'"').encode(),home)
+  invalid=copy.deepcopy(saved);invalid['profiles'].pop()
+  self.assertEqual(self.request('/api/admin/content','POST',invalid,auth=True)[0],400)
+  invalid=copy.deepcopy(saved);invalid['profiles'][0]['image']='https://evil.example/profile.png'
+  self.assertEqual(self.request('/api/admin/content','POST',invalid,auth=True)[0],400)
+  saved['profiles'][0]['image']=None
+  self.assertEqual(self.request('/api/admin/content','POST',saved,auth=True)[0],200)
+  self.assertNotIn(('src="'+uploaded['url']+'"').encode(),self.request('/')[1])
  def test_invalid_content_and_no_public_secrets(self):
   self.setup_owner();data=cms.defaults();data['hero']['line1']='<script>alert(1)</script>'
   self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],200)
@@ -99,4 +123,3 @@ class DashboardFlow(unittest.TestCase):
   for _ in range(10):self.assertEqual(self.request('/api/admin/login','POST',{'password':'wrong'})[0],401)
   self.assertEqual(self.request('/api/admin/login','POST',{'password':'wrong'})[0],429)
 if __name__=='__main__':unittest.main()
-
