@@ -93,6 +93,17 @@ def load_content(strict=False):
         return defaults()
 
 
+def project_items(data):
+    if 'projects' in data:
+        return data['projects']
+    services = sorted(published_services(data), key=lambda item: not str(item.get('image') or '').startswith('/media/'))[:3]
+    return [{'title': item['title'], 'summary': item['summary'], 'images': [item['image']] if item.get('image') else [], 'published': True} for item in services]
+
+
+def profile_items(data):
+    return data.get('profiles', [{'name': '', 'role': '', 'image': None} for _ in range(6)])
+
+
 def published_services(data):
     return [s for s in data['services'] if s.get('published', True)]
 
@@ -155,10 +166,50 @@ def validate_content(raw):
         data['services'].append({'slug': slug, 'title': text(s.get('title'), 'Service title', 100), 'category': s['category'], 'summary': text(s.get('summary'), 'Service summary', 300), 'scope': [text(item, 'Scope item', 180) for item in scopes], 'prompt': text(s.get('prompt'), 'Project guidance', 300), 'image': image_value(s.get('image')), 'published': s['published']})
     if not any(s['published'] for s in data['services']):
         raise CmsError('Keep at least one service published.')
+    projects = raw.get('projects', project_items(raw))
+    if not isinstance(projects, list) or len(projects) > 50:
+        raise CmsError('Add up to fifty projects.')
+    data['projects'] = []
+    for project in projects:
+        if not isinstance(project, dict) or not isinstance(project.get('published'), bool):
+            raise CmsError('Invalid project.')
+        images = project.get('images')
+        if not isinstance(images, list) or len(images) > 50:
+            raise CmsError('Add up to fifty photos per project.')
+        data['projects'].append({'title': text(project.get('title'), 'Project title', 100),
+                                 'summary': text(project.get('summary'), 'Project description', 500, False),
+                                 'images': [image_value(image, True) for image in images],
+                                 'published': project['published']})
+    profiles = profile_items(raw)
+    if not isinstance(profiles, list) or len(profiles) != 6:
+        raise CmsError('Keep exactly six About Us profiles.')
+    data['profiles'] = []
+    for profile in profiles:
+        if not isinstance(profile, dict):
+            raise CmsError('Invalid About Us profile.')
+        data['profiles'].append({'name': text(profile.get('name'), 'Profile name', 100, False),
+                                 'role': text(profile.get('role'), 'Profile role', 100, False),
+                                 'image': image_value(profile.get('image'))})
     return data
 
 
 def admin_record():
+    # An operator-managed credential reset takes precedence over legacy Blob login.
+    configured = os.environ.get('CMS_ADMIN_CREDENTIALS')
+    if configured is not None:
+        try:
+            record = json.loads(configured)
+            if not isinstance(record, dict):
+                raise ValueError()
+            username = record.get('username')
+            if not isinstance(username, str) or not 1 <= len(username) <= 100:
+                raise ValueError()
+            for field, size in (('salt', 32), ('key', 64), ('password', 64)):
+                if not isinstance(record.get(field), str) or not re.fullmatch('[a-f0-9]{' + str(size) + '}', record[field]):
+                    raise ValueError()
+            return record
+        except (ValueError, TypeError):
+            raise CmsError('Dashboard sign-in configuration needs attention.', 503)
     body = read_object('auth/admin.json')
     return json.loads(body) if body else None
 
@@ -246,7 +297,7 @@ def handle(environ, start_response):
                 return response(start_response, 405, {'error': 'Use GET.'}, [('Allow', 'GET')])
             record = admin_record()
             session = session_for(environ, record)
-            return response(start_response, 200, {'configured': bool(record), 'authenticated': bool(session), 'csrf': session['csrf'] if session else None, 'setup_allowed': bool(setup_allowed(environ)), 'setup_url': os.environ.get('CMS_SETUP_URL') if not record else None})
+            return response(start_response, 200, {'configured': bool(record), 'username_required': bool(record and record.get('username')), 'authenticated': bool(session), 'csrf': session['csrf'] if session else None, 'setup_allowed': bool(setup_allowed(environ)), 'setup_url': os.environ.get('CMS_SETUP_URL') if not record else None})
         if path == '/api/admin/content' and method == 'GET':
             if not session_for(environ, admin_record()):
                 raise CmsError('Sign in to manage website content.', 401)
@@ -279,13 +330,17 @@ def handle(environ, start_response):
             identity = environ.get('HTTP_X_VERCEL_FORWARDED_FOR') or environ.get('REMOTE_ADDR', 'unknown')
             identity = hashlib.sha256(identity.encode()).hexdigest()[:32]
             bucket = int(time.time()) // 900
-            attempt_prefix = f'login/{identity}/{bucket}/'
+            credential_version = hashlib.sha256(record['key'].encode()).hexdigest()[:16]
+            attempt_prefix = f'login/{credential_version}/{identity}/{bucket}/'
             if len(list_objects(attempt_prefix)) >= 10:
                 raise CmsError('Too many sign-in attempts. Try again in 15 minutes.', 429)
             write_object(attempt_prefix + secrets.token_hex(8) + '.json', b'{}')
             password = data.get('password')
-            if not isinstance(password, str) or len(password) > 200 or not hmac.compare_digest(password_hash(password, record['salt']), record['password']):
-                raise CmsError('The password is incorrect.', 401)
+            username = data.get('username', '')
+            valid_password = isinstance(password, str) and len(password) <= 200 and hmac.compare_digest(password_hash(password, record['salt']), record['password'])
+            valid_username = not record.get('username') or (isinstance(username, str) and len(username) <= 100 and hmac.compare_digest(username.encode(), record['username'].encode()))
+            if not valid_password or not valid_username:
+                raise CmsError('The username or password is incorrect.', 401)
             cookie, session = session_cookie(record, environ)
             return response(start_response, 200, {'ok': True, 'csrf': session['csrf']}, [('Set-Cookie', cookie)])
         session = session_for(environ, record)
@@ -296,7 +351,7 @@ def handle(environ, start_response):
         if path == '/api/admin/logout':
             return response(start_response, 200, {'ok': True}, [('Set-Cookie', f'{COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict; Secure')])
         if path == '/api/admin/upload':
-            from PIL import Image
+            from PIL import Image, ImageOps
             try:
                 raw = base64.b64decode(data.get('data', ''), validate=True)
             except (ValueError, TypeError):
@@ -311,6 +366,14 @@ def handle(environ, start_response):
                     image.verify()
             except Exception:
                 raise CmsError('Choose a PNG, JPEG or WebP image under 20 megapixels.')
+            if data.get('project_square') is True:
+                with Image.open(io.BytesIO(raw)) as image:
+                    fitted = ImageOps.contain(ImageOps.exif_transpose(image).convert('RGBA'), (1080, 1080), Image.Resampling.LANCZOS)
+                    square = Image.new('RGBA', (1080, 1080), 'white')
+                    square.alpha_composite(fitted, ((1080 - fitted.width) // 2, (1080 - fitted.height) // 2))
+                    output = io.BytesIO()
+                    square.convert('RGB').save(output, 'WEBP', quality=90)
+                    raw, fmt = output.getvalue(), 'WEBP'
             extension, mime = {'PNG': ('png', 'image/png'), 'JPEG': ('jpg', 'image/jpeg'), 'WEBP': ('webp', 'image/webp')}[fmt]
             pathname = 'media/' + secrets.token_hex(16) + '.' + extension
             write_object(pathname, raw, mime)

@@ -1,0 +1,10 @@
+/* Keep existing page resets and avoid collisions with legacy class names. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw) source(none);
+@source "../app.py";
+@source "../dashboard.py";
+@theme {
+  --color-brand-navy: #0b1e55;
+  --color-brand-green: #27bb36;
+}

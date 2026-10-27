@@ -64,6 +64,33 @@ class DashboardFlow(unittest.TestCase):
   status,body,headers=self.request(data['url']);self.assertEqual(status,200);self.assertEqual(body,raw);self.assertEqual(headers['Content-Type'],'image/png')
   content=self.request('/api/admin/content',auth=True)[1];content['services'][0]['image']=data['url'];self.assertEqual(self.request('/api/admin/content','POST',content,auth=True)[0],200)
   self.assertIn(data['url'].encode(),self.request('/services/basketball-courts')[1])
+  home=self.request('/')[1]
+  self.assertIn(('src="'+data['url']+'"').encode(),home)
+  self.assertNotIn(('https://likithasports.com/assets/home/'+data['url']).encode(),home)
+ def test_about_profile_upload_publish_and_remove(self):
+  self.setup_owner()
+  data=self.request('/api/admin/content',auth=True)[1]
+  self.assertEqual(len(cms.profile_items(data)),6)
+  image=Image.new('RGB',(400,600),'navy');out=io.BytesIO();image.save(out,'PNG')
+  status,uploaded,_=self.request('/api/admin/upload','POST',{'data':base64.b64encode(out.getvalue()).decode(),'project_square':True},auth=True)
+  self.assertEqual(status,201)
+  self.assertEqual(Image.open(io.BytesIO(self.request(uploaded['url'])[1])).size,(1080,1080))
+  data['profiles']=cms.profile_items(data)
+  data['profiles'][0]={'name':'Team <member>','role':'Engineer & planner','image':uploaded['url']}
+  self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],200)
+  saved=self.request('/api/admin/content',auth=True)[1]
+  self.assertEqual(saved['profiles'][0]['image'],uploaded['url'])
+  home=self.request('/')[1]
+  self.assertEqual(home.count(b'about-box profile-card'),6)
+  self.assertIn(b'Team &lt;member&gt;',home);self.assertIn(b'Engineer &amp; planner',home)
+  self.assertIn(('src="'+uploaded['url']+'"').encode(),home)
+  invalid=copy.deepcopy(saved);invalid['profiles'].pop()
+  self.assertEqual(self.request('/api/admin/content','POST',invalid,auth=True)[0],400)
+  invalid=copy.deepcopy(saved);invalid['profiles'][0]['image']='https://evil.example/profile.png'
+  self.assertEqual(self.request('/api/admin/content','POST',invalid,auth=True)[0],400)
+  saved['profiles'][0]['image']=None
+  self.assertEqual(self.request('/api/admin/content','POST',saved,auth=True)[0],200)
+  self.assertNotIn(('src="'+uploaded['url']+'"').encode(),self.request('/')[1])
  def test_invalid_content_and_no_public_secrets(self):
   self.setup_owner();data=cms.defaults();data['hero']['line1']='<script>alert(1)</script>'
   self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],200)
@@ -71,6 +98,23 @@ class DashboardFlow(unittest.TestCase):
   data=cms.load_content();data['services'][0]['image']='https://evil.example/image.png';self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],400)
   data=cms.load_content();data['services'][0]['slug']='../../auth/admin';self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],400)
   self.assertNotIn('password',json.dumps(self.request('/api/services')[1]))
+ def test_project_gallery_upload_publish_and_visibility(self):
+  self.setup_owner()
+  image=Image.new('RGB',(1600,900),'green');out=io.BytesIO();image.save(out,'PNG')
+  status,uploaded,_=self.request('/api/admin/upload','POST',{'data':base64.b64encode(out.getvalue()).decode(),'project_square':True},auth=True)
+  self.assertEqual(status,201)
+  delivered=self.request(uploaded['url'])[1]
+  self.assertEqual(Image.open(io.BytesIO(delivered)).size,(1080,1080))
+  data=self.request('/api/admin/content',auth=True)[1]
+  data['projects']=[{'title':'Our <court>','summary':'A square gallery','images':[uploaded['url'],'tennis.webp'],'published':True},{'title':'Hidden project','summary':'Private draft','images':[],'published':False}]
+  self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],200)
+  saved=self.request('/api/admin/content',auth=True)[1]
+  self.assertEqual(saved['projects'][0]['images'],[uploaded['url'],'tennis.webp'])
+  home=self.request('/')[1]
+  self.assertIn(b'Our &lt;court&gt;',home);self.assertIn(uploaded['url'].encode(),home)
+  self.assertIn(b'width="1080" height="1080"',home);self.assertNotIn(b'Hidden project',home)
+  saved['projects'][0]['images']=['https://invalid.example/photo.png']
+  self.assertEqual(self.request('/api/admin/content','POST',saved,auth=True)[0],400)
  def test_dashboard_and_logout(self):
   status,body,headers=self.request('/dashboard');self.assertEqual(status,200);self.assertEqual(headers['Cache-Control'],'no-store');self.assertIn('noindex',headers['X-Robots-Tag'])
   self.setup_owner();self.assertEqual(self.request('/api/admin/logout','POST',{},auth=True)[0],200);self.assertFalse(self.request('/api/admin/status',auth=True)[1]['authenticated'])
