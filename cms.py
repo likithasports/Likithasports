@@ -1,4 +1,4 @@
-"""Private Blob content storage and password-protected dashboard endpoints."""
+"""Supabase content storage and password-protected dashboard endpoints."""
 import base64
 import copy
 import hashlib
@@ -12,6 +12,8 @@ import time
 from http.cookies import SimpleCookie
 from pathlib import Path
 from urllib.parse import urlsplit
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 
 from catalog import SERVICES
 
@@ -41,8 +43,34 @@ def test_dir():
     return os.environ.get('CMS_TEST_DIR') if not os.environ.get('VERCEL') else None
 
 
+def supabase_ready():
+    return bool(os.environ.get('SUPABASE_CMS_URL') and os.environ.get('SUPABASE_CMS_SECRET'))
+
+
 def storage_ready():
-    return bool(os.environ.get('BLOB_READ_WRITE_TOKEN') or test_dir())
+    return bool(supabase_ready() or os.environ.get('BLOB_READ_WRITE_TOKEN') or test_dir())
+
+
+def supabase_request(action, path, body=None, content_type='application/json'):
+    payload = {'action': action, 'path': path}
+    if action == 'write':
+        payload.update(body=base64.b64encode(body).decode() if path.startswith('media/') else json.loads(body), content_type=content_type)
+    request = Request(os.environ['SUPABASE_CMS_URL'], data=json.dumps(payload).encode(), headers={
+        'Content-Type': 'application/json', 'X-Cms-Secret': os.environ['SUPABASE_CMS_SECRET']}, method='POST')
+    try:
+        with urlopen(request, timeout=25) as result:
+            raw = result.read()
+            if action == 'read' and path.startswith('media/') and result.headers.get('Content-Type', '').startswith('image/'):
+                return raw
+            data = json.loads(raw)
+            if action == 'list':
+                return data['paths']
+            if action == 'read':
+                return None if data.get('missing') else json.dumps(data['body'], ensure_ascii=False).encode()
+            return None
+    except HTTPError as error:
+        raise CmsError('Content already exists.' if error.code == 409 else 'Supabase storage is unavailable. Please retry.', 409 if error.code == 409 else 503)
+
 
 
 def read_object(path):
@@ -51,6 +79,23 @@ def read_object(path):
         return p.read_bytes() if p.exists() else None
     if not storage_ready():
         raise CmsError('Content storage is not connected.', 503)
+    if supabase_ready():
+        body = supabase_request('read', path)
+        if body is not None or not os.environ.get('BLOB_READ_WRITE_TOKEN'):
+            return body
+        # Preserve existing uploads and copy them into Supabase when accessed.
+        from vercel.blob import sync, BlobNotFoundError
+        try:
+            body = sync.get_blob(PREFIX + path, access='private').body
+        except BlobNotFoundError:
+            return None
+        mime = {'png': 'image/png', 'jpg': 'image/jpeg', 'webp': 'image/webp'}.get(path.rsplit('.', 1)[-1], 'application/json')
+        try:
+            supabase_request('write', path, body, mime)
+        except CmsError as error:
+            if error.status != 409:
+                raise
+        return body
     from vercel.blob import sync, BlobNotFoundError
     try:
         return sync.get_blob(PREFIX + path, access='private').body
@@ -65,6 +110,9 @@ def write_object(path, body, content_type='application/json'):
         with p.open('xb') as f:
             f.write(body)
         return
+    if supabase_ready():
+        supabase_request('write', path, body, content_type)
+        return
     from vercel.blob import sync
     sync.put_blob(PREFIX + path, body, access='private', content_type=content_type, allow_overwrite=False, cache_control_max_age=60)
 
@@ -75,6 +123,13 @@ def list_objects(prefix):
         return [str(p.relative_to(root)) for p in (root / prefix).rglob('*') if p.is_file()] if (root / prefix).exists() else []
     if not storage_ready():
         raise CmsError('Content storage is not connected.', 503)
+    if supabase_ready():
+        paths = supabase_request('list', prefix)
+        if not os.environ.get('BLOB_READ_WRITE_TOKEN'):
+            return paths
+        from vercel.blob import sync
+        legacy = [b.pathname[len(PREFIX):] for b in sync.query_blobs(prefix=PREFIX + prefix, page_size=1000)]
+        return sorted(set(paths + legacy))
     from vercel.blob import sync
     return [b.pathname[len(PREFIX):] for b in sync.query_blobs(prefix=PREFIX + prefix, page_size=1000)]
 

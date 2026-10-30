@@ -12,7 +12,7 @@ Visit http://localhost:8000. For Render, install requirements and run `gunicorn 
 
 ## Vercel
 
-The checked-in `vercel.json` explicitly packages `app.py` with `@vercel/python` and sends application paths to the WSGI app. The logo is explicitly bundled as a static asset and routed separately. Python is pinned to 3.12 via `.python-version`. This working builder configuration overrides dashboard build settings. No environment secrets or database are required.
+The checked-in `vercel.json` explicitly packages `app.py` with `@vercel/python` and sends application paths to the WSGI app. The logo is explicitly bundled as a static asset and routed separately. Python is pinned to 3.12 via `.python-version`. This working builder configuration overrides dashboard build settings. Public pages have built-in defaults; dashboard persistence requires the storage environment variables below.
 
 Routes: `/`, `/logo.png`, `/healthz`, `/robots.txt`; unknown routes return 404. GET and HEAD are supported; other methods return 405.
 
@@ -28,7 +28,7 @@ Homepage search combines terms with the selected category, updates the result co
 
 ## Content dashboard
 
-`/dashboard` provides password-protected editing for homepage text, service entries and carousel slides. Images (PNG/JPEG/WebP, up to 2 MB and 20 megapixels) are validated server-side and stored in a private Vercel Blob store. Only website images are delivered through the public `/media/<opaque-id>` route. Service visibility, service addition/removal and slide reordering are supported. Changes affect the public pages after Publish.
+`/dashboard` provides password-protected editing for homepage text, service entries and carousel slides. Images (PNG/JPEG/WebP, up to 2 MB and 20 megapixels) are validated server-side and stored in a private Supabase Storage bucket when configured. Only website images are delivered through the public `/media/<opaque-id>` route. Service visibility, service addition/removal and slide reordering are supported. Changes affect the public pages after Publish.
 
 `BLOB_READ_WRITE_TOKEN` is automatically supplied by the connected `likitha-sports-content` Vercel Blob store. Do not commit tokens. There is no production filesystem persistence or client-only persistence. Published content is stored as immutable timestamped JSON versions; reads select the latest version. Prior versions are retained. Publishing checks the editor revision to detect an already-published update. Concurrent publishes that start at exactly the same time may both be retained, with the newest version taking effect.
 
@@ -42,7 +42,7 @@ Content editing is intended for a small owner-managed site. There is one admin p
 
 ### Checks
 
-Run `python -m unittest discover -s tests -v`. Tests use an isolated temporary storage adapter enabled through `CMS_TEST_DIR`; the adapter is ignored on Vercel. The production app always uses Vercel Blob. `CMS_DEV_SETUP=1` is a local testing option and is not deployed.
+Run `python -m unittest discover -s tests -v`. Tests use an isolated temporary storage adapter enabled through `CMS_TEST_DIR`; the adapter is ignored on Vercel. The production app uses Supabase when configured, with a Vercel Blob compatibility reader for earlier uploads. `CMS_DEV_SETUP=1` is a local testing option and is not deployed.
 
 ## Tailwind CSS
 
@@ -68,3 +68,11 @@ Header and footer links provide Home, About Us, Services, Clients, Projects and 
 Clients describes school/campus, academy/club and community audiences. The Projects gallery links to up to three published sports solutions, prioritising service images uploaded through the dashboard. Unpublished solutions are excluded; solutions without images use the existing sport illustrations. Uploaded `/media/` paths use the same URL resolver as service cards and detail pages.
 
 About Us includes six capability cards in a wrapping Flexbox layout: three columns on desktop, two on tablets and one on phones. Cards cover planning, surfaces, construction, fencing/netting, lighting/equipment and installation.
+
+## Supabase dashboard connection
+
+Production uses `SUPABASE_CMS_URL` (the `likitha-dashboard-storage` Edge Function URL) and `SUPABASE_CMS_SECRET` (a server-only random secret). The function verifies the SHA-256 digest of that secret before accessing storage. It has its own authentication, so platform JWT verification is disabled. Never send this secret to the browser. The function uses Supabase-provided server credentials; no project service key is copied to Vercel.
+
+JSON content versions and login-attempt records are stored in `public.cms_objects` with RLS enabled and no anonymous or authenticated table privileges. Photos are stored in the private `likitha-dashboard` bucket, and remain served through the existing `/media/` route. Existing administrator configuration, validation, sessions, CSRF checks and publishing behavior are retained.
+
+Keep `BLOB_READ_WRITE_TOKEN` while older content is being migrated. Listings combine both stores; reading an old object copies it into Supabase without deleting the original. All new writes go to Supabase. Do not remove the old token until all referenced media and the latest content have been copied and checked. A Supabase outage fails dashboard writes instead of silently saving elsewhere.
