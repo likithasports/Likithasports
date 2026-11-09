@@ -46,10 +46,13 @@ PAGE = r'''<!doctype html>
 .hero .photo-bottom{left:auto;right:clamp(24px,5vw,80px);bottom:35px;width:min(390px,43vw)}
 .hero .photo-bottom h2{font-size:clamp(18px,2.3vw,30px);margin-bottom:16px}
 @media(max-width:720px){.hero{min-height:calc(100svh - 110px)}.hero-grid>div:first-child{padding:70px 22px 210px;justify-content:center}.hero h1{font-size:clamp(40px,11vw,58px)}.hero .photo-tag{top:15px;right:16px;font-size:8px}.hero .photo-bottom{width:auto;left:22px;right:22px;bottom:22px}.hero .photo-bottom h2{font-size:21px;margin-bottom:12px}.hero .photo:after{background:linear-gradient(180deg,rgba(5,15,44,.55),rgba(5,15,44,.78) 52%,rgba(5,15,44,.65))}.hero-note{flex-wrap:wrap}}
+
+/* Multi-page navigation and project galleries */
+.links{gap:clamp(10px,1.6vw,24px);flex-wrap:wrap}.links>a{white-space:nowrap}.nav{height:auto;min-height:94px}.page-intro{padding:80px 0 55px;background:var(--pale)}.page-intro h1{font-size:clamp(38px,5vw,64px);max-width:900px}.page-intro p{max-width:680px;color:var(--muted)}.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.feature-box{padding:30px;border:1px solid var(--line);border-radius:8px;background:white;min-height:210px}.feature-box h3{color:var(--navy);margin-top:0}.feature-box p{font-size:14px;color:var(--muted)}.project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.project-tile{aspect-ratio:1;position:relative;overflow:hidden;border-radius:8px;background:var(--navy)}.project-tile img{width:100%;height:100%;object-fit:cover;transition:transform .35s}.project-tile:hover img{transform:scale(1.06)}.project-tile .tile-caption{position:absolute;inset:auto 0 0;padding:35px 20px 20px;background:linear-gradient(transparent,#071331e8);color:white;font-weight:700}.notice-panel{padding:38px;background:var(--pale);border-left:4px solid var(--green);max-width:800px}.notice-panel p{color:var(--muted)}@media(max-width:850px){.links{gap:12px;font-size:12px}.logo{width:170px}.nav{gap:12px}.links .btn{padding:10px}}@media(max-width:720px){.feature-grid,.project-grid{grid-template-columns:1fr 1fr}.page-intro{padding:55px 0 35px}.nav{min-height:79px}.links{gap:18px;font-size:14px}.logo{width:210px}}@media(max-width:480px){.feature-grid,.project-grid{grid-template-columns:1fr}}
 </style></head>
 <body><a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap"><span>SPORTS SURFACES & SPORTS SUPPLIERS</span><span class="location">Built for schools. Academies. Communities.</span><a href="tel:+918179655506">Call +91 81796 55506 ↗</a></div></div>
-<header><div class="wrap nav"><a href="/" aria-label="Likitha Sports home"><img class="logo" src="/logo.png?v=2" width="300" height="100" alt="Likitha Sports Surfaces & Sports Suppliers"></a><button class="menu" aria-expanded="false" aria-controls="navigation">Menu</button><nav class="links" id="navigation" aria-label="Main navigation"><a href="/#solutions">Our solutions</a><a href="/#about">How we work</a><a href="#contact">Contact</a><a class="btn" href="#contact">Start your project <span aria-hidden="true">↗</span></a></nav></div></header>
+<header><div class="wrap nav"><a href="/" aria-label="Likitha Sports home"><img class="logo" src="/logo.png?v=2" width="300" height="100" alt="Likitha Sports Surfaces & Sports Suppliers"></a><button class="menu" aria-expanded="false" aria-controls="navigation">Menu</button><nav class="links" id="navigation" aria-label="Main navigation"><a href="/">Home</a><a href="/about-us">About us</a><a href="/projects">Projects</a><a href="/clients">Clients</a><a href="/testimonials">Testimonials</a><a href="#contact">Contact</a><a class="btn" href="#contact">Start your project <span aria-hidden="true">↗</span></a></nav></div></header>
 <main id="main">
 <section class="hero" aria-label="Sports infrastructure highlights"><div class="wrap hero-grid"><div><p class="eyebrow">Your space. Our expertise.</p><h1>Great spaces.<br><span>Greater games.</span></h1><p class="hero-copy">Courts, turfs and sports infrastructure.<br>From your first idea to the first game.</p><div class="actions"><a class="btn green" href="/#solutions">Explore solutions <span aria-hidden="true">↗</span></a><a class="btn outline" href="#contact">Get a quote <span aria-hidden="true">↗</span></a></div><div class="hero-note"><span>Surface & construction</span><span>Equipment & installation</span></div></div><div class="visual"><div class="photo" aria-roledescription="carousel" aria-label="Featured sports surfaces"><img id="hero-image" src="https://likithasports.com/assets/home/football-truf.webp" width="650" height="650" alt="Football turf" fetchpriority="high"><span class="photo-tag">BUILT FOR THE WAY YOU PLAY</span><div class="photo-bottom"><p id="slide-category">FIELDS & TURFS / 01</p><h2 id="slide-title">More room for your game.</h2><div class="controls"><button class="dot" aria-label="Slide 1: Football turf" aria-pressed="true"></button><button class="dot" aria-label="Slide 2: Basketball courts" aria-pressed="false"></button><button class="dot" aria-label="Slide 3: Outdoor tennis courts" aria-pressed="false"></button><button class="pause" id="pause" aria-label="Pause slideshow">Pause</button></div></div></div></div></div></section>
 <div class="ribbon"><div class="wrap"><span>SPORTS SURFACES</span><span>COURT CONSTRUCTION</span><span>FENCING & NETTING</span><span>FLOODLIGHTS</span><span>SPORTS EQUIPMENT</span></div></div>
@@ -57,7 +60,7 @@ PAGE = r'''<!doctype html>
 <section class="section about" id="about"><div class="wrap about-grid"><div><p class="eyebrow">From plan to play</p><h2>One partner.<br>Your whole sports space.</h2><p>We bring surfaces, construction and sports equipment together for schools, academies and communities.</p><a class="btn outline" href="#contact">Let’s build together <span aria-hidden="true">↗</span></a></div><div class="steps"><div class="step"><span>01</span><div><h3>Tell us your game plan</h3><p>Share your sport, site and project requirements.</p></div></div><div class="step"><span>02</span><div><h3>Find the right solution</h3><p>Discuss surface options, equipment and the scope of work.</p></div></div><div class="step"><span>03</span><div><h3>Bring your space to life</h3><p>Move forward with construction and installation.</p></div></div></div></div></section>
 <section class="section" id="faq"><div class="wrap faq-grid"><div><p class="eyebrow">A little more clarity</p><h2>Before we get<br>the game going.</h2></div><div class="faq-list"><details><summary>What should I share for a project enquiry?</summary><p>Your location, available area, sport, intended use and preferred timeline help us understand the project. You can add these details to the enquiry form below.</p></details><details><summary>Can I combine different sports in one space?</summary><p>Multi-sport options can be discussed around your available area and intended games. Explore our pickleball and multi-sport court solution, then share your requirements with the team.</p></details><details><summary>Can I enquire about equipment or lighting only?</summary><p>Yes. Choose fencing, lighting and equipment in the enquiry form and describe what you need for your existing or proposed space.</p></details><details><summary>How do I get a project quote?</summary><p>Choose a solution, fill in your project details and continue to WhatsApp. Review the prepared message and send it to begin the discussion. Pricing and timelines depend on your project requirements.</p></details></div></div></section>
 <section class="section contact" id="contact"><div class="wrap contact-grid"><div><p class="eyebrow">Let’s get the ball rolling</p><h2>Your next great<br>game starts here.</h2><p class="contact-copy">Have a site in mind? Tell us what you want to build. We’ll help you take the next step.</p><div class="contact-details"><small>CALL OUR TEAM</small><a href="tel:+918179655506">+91 81796 55506 ↗</a><small>WRITE TO US</small><a class="email" href="mailto:infolikithasports@gmail.com">infolikithasports@gmail.com ↗</a></div></div><form id="enquiry"><div><label for="name">Your name *</label><input id="name" name="name" autocomplete="name" maxlength="100" required placeholder="Full name"></div><div><label for="phone">Phone number *</label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="30" required placeholder="Your phone number"></div><div><label for="location">Project location *</label><input id="location" name="location" autocomplete="address-level2" maxlength="150" required placeholder="City / area"></div><div><label for="sport">Interested in</label><select id="sport" name="sport"><option>Basketball courts</option><option>Tennis courts (Outdoor)</option><option>Football turf & box cricket</option><option>Athletic Track</option><option>Beach volleyball</option><option>Swimming pool</option><option>Indoor Stadium (Construction)</option><option>Pickleball & multi-sport courts</option><option>Fencing, lighting & equipment</option><option>Other sports infrastructure</option></select></div><div class="full"><label for="message">Tell us about your project</label><textarea id="message" name="message" maxlength="2000" placeholder="Site size, preferred timeline, or anything we should know…"></textarea></div><button type="submit" class="btn green full">Continue to WhatsApp <span aria-hidden="true">↗</span></button><p class="fine full">Review and send your enquiry in WhatsApp. Your details are not stored on this website.</p></form></div></section>
-</main><footer><div class="wrap"><div class="footer-top"><a href="/" aria-label="Likitha Sports home"><img class="logo" src="/logo.png?v=2" width="300" height="100" alt="Likitha Sports Surfaces & Sports Suppliers" loading="lazy"></a><nav class="footer-links" aria-label="Footer navigation"><a href="/#solutions">Solutions</a><a href="/#about">How we work</a><a href="#contact">Contact</a></nav></div><div class="footer-bottom"><span>© <span id="year">2026</span> Likitha Sports. All rights reserved.</span><span>Sports surfaces. Stronger possibilities.<a class="top-link" href="#main">Back to top ↑</a></span></div></div></footer><a class="whatsapp" href="https://wa.me/918179655506" target="_blank" rel="noopener noreferrer">Chat on WhatsApp ↗</a>
+</main><footer><div class="wrap"><div class="footer-top"><a href="/" aria-label="Likitha Sports home"><img class="logo" src="/logo.png?v=2" width="300" height="100" alt="Likitha Sports Surfaces & Sports Suppliers" loading="lazy"></a><nav class="footer-links" aria-label="Footer navigation"><a href="/">Home</a><a href="/about-us">About us</a><a href="/projects">Projects</a><a href="/clients">Clients</a><a href="/testimonials">Testimonials</a><a href="#contact">Contact</a></nav></div><div class="footer-bottom"><span>© <span id="year">2026</span> Likitha Sports. All rights reserved.</span><span>Sports surfaces. Stronger possibilities.<a class="top-link" href="#main">Back to top ↑</a></span></div></div></footer><a class="whatsapp" href="https://wa.me/918179655506" target="_blank" rel="noopener noreferrer">Chat on WhatsApp ↗</a>
 <script>
 const menu=document.querySelector('.menu'),navigation=document.getElementById('navigation');
 menu.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));navigation.classList.toggle('open',open)});
@@ -163,6 +166,53 @@ def service_page(slug, content=None):
 
 
 
+
+def section_page(name):
+    """Render standalone pages using the site's existing branding and navigation."""
+    content = cms.load_content()
+    services = cms.published_services(content)
+    titles = {'about-us': 'About us', 'projects': 'Projects', 'clients': 'Clients', 'testimonials': 'Testimonials'}
+    descriptions = {
+        'about-us': 'We plan and build sports spaces for schools, academies and communities.',
+        'projects': 'Explore the sports surfaces and facilities we work on.',
+        'clients': 'Working with organisations that value well-planned sports spaces.',
+        'testimonials': 'Feedback from our clients and partners.'
+    }
+    title = titles[name]
+    intro = f'<section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>{title}</h1><p>{descriptions[name]}</p></div></section>'
+    if name == 'about-us':
+        blocks = [
+            ('Our mission', 'Make quality sports infrastructure accessible to more communities.'),
+            ('Court construction', 'Sports court planning, surfacing and installation.'),
+            ('Turfs and tracks', 'Purpose-built spaces for training and recreation.'),
+            ('Project planning', 'A clear scope shaped around your site and requirements.'),
+            ('Materials and finishes', 'Practical surface options suited to intended use.'),
+            ('From idea to play', 'Support from initial planning through project delivery.')
+        ]
+        cards = ''.join(f'<article class="feature-box"><h3>{escape(t)}</h3><p>{escape(d)}</p></article>' for t,d in blocks)
+        body = f'<section class="section"><div class="wrap"><h2>What we do</h2><div class="feature-grid">{cards}</div></div></section>'
+    elif name == 'projects':
+        tiles = []
+        for service in services:
+            if service.get('image'):
+                url = escape(cms.image_url(service['image']), quote=True)
+                label = escape(service['title'])
+                tiles.append(f'<a class="project-tile" href="/services/{escape(service["slug"], quote=True)}"><img src="{url}" alt="{label}" loading="lazy"><span class="tile-caption">{label} ↗</span></a>')
+        if tiles:
+            body = '<section class="section"><div class="wrap"><h2>Sports infrastructure gallery</h2><p>Illustrative service imagery; completed-project photographs can be added as they become available.</p><div class="project-grid">' + ''.join(tiles) + '</div></div></section>'
+        else:
+            body = '<section class="section"><div class="wrap"><div class="notice-panel"><h2>Project gallery coming soon</h2><p>We are preparing photographs of our work.</p></div></div></section>'
+    elif name == 'clients':
+        body = '<section class="section"><div class="wrap"><div class="notice-panel"><h2>Our clients</h2><p>Verified client names and logos will appear here once approved for publication.</p><a class="btn green" href="/#contact">Discuss a project ↗</a></div></div></section>'
+    else:
+        body = '<section class="section"><div class="wrap"><div class="notice-panel"><h2>Client testimonials</h2><p>We will share genuine client feedback here when it is available and approved for publication.</p><a class="btn green" href="/#contact">Contact our team ↗</a></div></div></section>'
+    shell = PAGE
+    head_end = shell.index('<main id="main">')
+    foot_start = shell.index('</main><footer>')
+    page = shell[:head_end] + '<main id="main">' + intro + body + shell[foot_start:]
+    page = page.replace('<title>Likitha Sports |', f'<title>{title} | Likitha Sports |')
+    return page
+
 def app(environ, start_response):
     path = environ.get('PATH_INFO', '/')
     method = environ.get('REQUEST_METHOD', 'GET')
@@ -178,6 +228,8 @@ def app(environ, start_response):
         status, content_type, body = '405 Method Not Allowed', 'text/plain; charset=utf-8', b'Method not allowed'
     elif path == '/':
         status, content_type, body = '200 OK', 'text/html; charset=utf-8', home_page(environ.get('QUERY_STRING', '')).encode('utf-8')
+    elif path.rstrip('/') in ('/about-us', '/projects', '/clients', '/testimonials'):
+        status, content_type, body = '200 OK', 'text/html; charset=utf-8', section_page(path.strip('/')).encode('utf-8')
     elif path.startswith('/services/'):
         slug = path[len('/services/'):].rstrip('/')
         page = service_page(slug)
