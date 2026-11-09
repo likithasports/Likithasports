@@ -29,6 +29,23 @@ PAGE = r'''<!doctype html>
 @media(max-width:720px){.search-tools{display:block}.results-count{margin-top:12px}.detail-grid,.detail-content,.faq-grid{grid-template-columns:1fr;gap:28px}.detail-hero{padding:32px 0 40px}.detail-hero h1{font-size:42px}.detail-image{height:260px}.detail-art{padding:30px}.planning-box{padding:25px}.card-symbol{height:130px}.empty-state{padding:25px}.faq-grid{gap:15px}}
 @media(prefers-reduced-motion:reduce){.reveal{animation:none}}
 
+
+/* Full-width landing hero with an immersive, automatically rotating carousel. */
+.hero{position:relative;padding:0;min-height:clamp(580px,calc(100svh - 130px),850px);background:var(--navy);color:#fff}
+.hero>.wrap{max-width:none;padding:0;min-height:inherit}
+.hero-grid{display:block;min-height:inherit}
+.hero-grid>.visual{position:absolute;inset:0;padding:0}
+.hero-grid>.visual:before{display:none}
+.hero .photo{height:100%;min-height:inherit;border-radius:0}
+.hero .photo>img{height:100%;width:100%;object-fit:cover;object-position:center}
+.hero .photo:after{background:linear-gradient(90deg,rgba(5,15,44,.88) 0%,rgba(5,15,44,.54) 46%,rgba(5,15,44,.1) 100%),linear-gradient(0deg,rgba(5,15,44,.62),transparent 42%)}
+.hero-grid>div:first-child{position:relative;z-index:4;display:flex;flex-direction:column;justify-content:center;min-height:inherit;max-width:790px;padding:90px clamp(24px,7vw,110px) 150px;pointer-events:none}
+.hero-grid>div:first-child a{pointer-events:auto}
+.hero .eyebrow{color:#a9f3b1}.hero h1{color:#fff}.hero h1 span{color:#6de57b}.hero-copy{color:#e4e9f4}.hero-note{border-color:#ffffff50;color:#e3e9f4}
+.hero .photo-tag{top:24px;right:clamp(20px,4vw,65px);left:auto}
+.hero .photo-bottom{left:auto;right:clamp(24px,5vw,80px);bottom:35px;width:min(390px,43vw)}
+.hero .photo-bottom h2{font-size:clamp(18px,2.3vw,30px);margin-bottom:16px}
+@media(max-width:720px){.hero{min-height:calc(100svh - 110px)}.hero-grid>div:first-child{padding:70px 22px 210px;justify-content:center}.hero h1{font-size:clamp(40px,11vw,58px)}.hero .photo-tag{top:15px;right:16px;font-size:8px}.hero .photo-bottom{width:auto;left:22px;right:22px;bottom:22px}.hero .photo-bottom h2{font-size:21px;margin-bottom:12px}.hero .photo:after{background:linear-gradient(180deg,rgba(5,15,44,.55),rgba(5,15,44,.78) 52%,rgba(5,15,44,.65))}.hero-note{flex-wrap:wrap}}
 </style></head>
 <body><a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap"><span>SPORTS SURFACES & SPORTS SUPPLIERS</span><span class="location">Built for schools. Academies. Communities.</span><a href="tel:+918179655506">Call +91 81796 55506 ↗</a></div></div>
