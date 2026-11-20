@@ -1,0 +1,3 @@
+<section class="section"><div class="wrap"><div class="project-grid">
+{% for photo in photos %}<figure class="gallery-photo"><img src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" loading="lazy"><figcaption>{{ photo.alt }}</figcaption></figure>{% endfor %}
+</div></div></section>

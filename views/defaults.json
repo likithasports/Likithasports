@@ -1,0 +1,164 @@
+{
+  "revision": "default",
+  "updated_at": null,
+  "logo": null,
+  "galleries": {
+    "about-us": [],
+    "projects": [],
+    "clients": [],
+    "testimonials": []
+  },
+  "hero": {
+    "line1": "Great spaces.",
+    "line2": "Greater games.",
+    "description": "Courts, turfs and sports infrastructure. From your first idea to the first game."
+  },
+  "slides": [
+    {
+      "title": "More room for your game.",
+      "category": "FIELDS & TURFS / 01",
+      "image": "football-truf.webp",
+      "alt": "Football turf"
+    },
+    {
+      "title": "Built for the next big shot.",
+      "category": "BASKETBALL COURTS / 02",
+      "image": "basketball.webp",
+      "alt": "Basketball court"
+    },
+    {
+      "title": "A fresh surface. A new game.",
+      "category": "OUTDOOR TENNIS COURTS / 03",
+      "image": "tennis.webp",
+      "alt": "Outdoor tennis court"
+    }
+  ],
+  "services": [
+    {
+      "slug": "basketball-courts",
+      "title": "Basketball courts",
+      "category": "court",
+      "image": "basketball.webp",
+      "summary": "Court surfaces and equipment for practice, competition and everyday play.",
+      "scope": [
+        "Court surface options",
+        "Line marking and basketball equipment",
+        "Fencing and lighting requirements"
+      ],
+      "prompt": "Tell us your site size and whether the court is for a school, academy or community.",
+      "published": true
+    },
+    {
+      "slug": "outdoor-tennis-courts",
+      "title": "Tennis courts (Outdoor)",
+      "category": "court",
+      "image": "tennis.webp",
+      "summary": "Outdoor tennis spaces planned around your site and sporting requirements.",
+      "scope": [
+        "Outdoor surface selection",
+        "Court marking and net equipment",
+        "Site drainage, fencing and lighting discussion"
+      ],
+      "prompt": "Share your location, available space and preferred playing surface.",
+      "published": true
+    },
+    {
+      "slug": "football-box-cricket",
+      "title": "Football turf & box cricket",
+      "category": "field",
+      "image": "football-truf.webp",
+      "summary": "Turf, netting and lighting for spaces that bring players together.",
+      "scope": [
+        "Turf surface options",
+        "Perimeter fencing and netting",
+        "Lighting and equipment planning"
+      ],
+      "prompt": "Let us know which sports you want to offer and the available site area.",
+      "published": true
+    },
+    {
+      "slug": "athletic-track",
+      "title": "Athletic Track",
+      "category": "field",
+      "image": null,
+      "summary": "Dedicated running and training spaces for schools, academies and communities.",
+      "scope": [
+        "Track layout discussion",
+        "Surface and base preparation requirements",
+        "Marking and supporting infrastructure"
+      ],
+      "prompt": "Share your available area, intended activities and project location.",
+      "published": true
+    },
+    {
+      "slug": "beach-volleyball",
+      "title": "Beach volleyball",
+      "category": "court",
+      "image": null,
+      "summary": "Sand courts planned for recreation, training and community sport.",
+      "scope": [
+        "Court layout and site planning",
+        "Sand and drainage requirements",
+        "Posts, nets and boundary equipment"
+      ],
+      "prompt": "Tell us your site location and how you plan to use the court.",
+      "published": true
+    },
+    {
+      "slug": "swimming-pool",
+      "title": "Swimming pool",
+      "category": "facility",
+      "image": null,
+      "summary": "Pool projects planned around the site, users and supporting facilities.",
+      "scope": [
+        "Pool layout and intended use",
+        "Civil work and system requirements",
+        "Surrounding circulation and facilities"
+      ],
+      "prompt": "Tell us the proposed location, intended use and any existing site plans.",
+      "published": true
+    },
+    {
+      "slug": "indoor-stadium",
+      "title": "Indoor Stadium (Construction)",
+      "category": "facility",
+      "image": null,
+      "summary": "Indoor sports facilities planned around your games and available space.",
+      "scope": [
+        "Sports and space requirements",
+        "Building and playing-area planning",
+        "Lighting, equipment and supporting facilities"
+      ],
+      "prompt": "Share the sports you want to accommodate and your available land or building area.",
+      "published": true
+    },
+    {
+      "slug": "pickleball-multi-sport",
+      "title": "Pickleball & multi-sport courts",
+      "category": "court",
+      "image": "pickleball.webp",
+      "summary": "Versatile courts that make more of your available sports space.",
+      "scope": [
+        "Sport selection and court layout",
+        "Surface and line-marking options",
+        "Nets and multi-sport equipment"
+      ],
+      "prompt": "Tell us which games you want to combine and the space available.",
+      "published": true
+    },
+    {
+      "slug": "fencing-lighting-equipment",
+      "title": "Fencing, lighting & equipment",
+      "category": "facility",
+      "image": null,
+      "summary": "The finishing elements that support a complete sports space.",
+      "scope": [
+        "Fencing and protective netting",
+        "Floodlight planning",
+        "Sport-specific equipment requirements"
+      ],
+      "prompt": "Tell us about your existing or proposed court and the equipment you need.",
+      "published": true
+    }
+  ]
+}

@@ -1,45 +1,19 @@
 # Likitha Sports
 
-Responsive Python WSGI website using the supplied Likitha logo and its sampled colours: navy `#0B1E55`, green `#27BB36`, white `#FFFFFF`. The transparent logo is stored in `assets/logo-transparent.png` and served at `/logo.png`; the original uploaded source is unchanged.
+Node.js serves the public website, service catalogue, private content dashboard and uploaded media. Use Node.js 22 or 24.
 
-## Run locally
+## Run and deploy
 
-```sh
-python app.py
-```
+From the repository root run `npm ci`, `npm run build`, then `npm start`. The server listens on all interfaces using the host's `PORT` (default 8000). For a hosting control panel, select Node.js, use the repository root as the app directory and set the startup file to `server.js`. The health check is `/healthz`.
 
-Visit http://localhost:8000. For Render, install requirements and run `gunicorn app:app --bind 0.0.0.0:$PORT`.
+The Vercel project uses the same request handler through `api/site.js`. The dashboard is at `/dashboard`. Existing published content, private media keys and administrator credential records retain their original formats.
 
-## Vercel
+## Dashboard storage
 
-The checked-in `vercel.json` explicitly packages `app.py` with `@vercel/python` and sends application paths to the WSGI app. The logo is explicitly bundled as a static asset and routed separately. Python is pinned to 3.12 via `.python-version`. This working builder configuration overrides dashboard build settings. No environment secrets or database are required.
+Use the existing private Vercel Blob store via the server environment variable `BLOB_READ_WRITE_TOKEN`. If the dashboard uses an operator-managed account, configure the existing `CMS_ADMIN_CREDENTIALS` secret on the new host as well. Serve production over HTTPS and set `NODE_ENV=production`. Never put credentials in the repository. Without storage, public pages use the built-in catalogue.
 
-Routes: `/`, `/logo.png`, `/healthz`, `/robots.txt`; unknown routes return 404. GET and HEAD are supported; other methods return 405.
+For a separate installation with a persistent volume, set `CMS_DATA_DIR` to a private directory outside the web root. For initial local setup, bind access to a trusted environment, set `CMS_DEV_SETUP=1`, start the app and open `/dashboard/setup`. Turn off local setup before publishing. The filesystem adapter is disabled on Vercel. For first-time setup on a Vercel preview, enable Vercel Authentication for that preview before setting the preview-only variable CMS_PRIVATE_SETUP=1.
 
-The three-slide carousel runs automatically every three seconds, has manual slide and pause controls, and pauses in hidden browser tabs. Category filters and service links populate the WhatsApp enquiry composer. No enquiry is stored or sent automatically by this app.
+## Tests
 
-Images are currently hosted at https://likithasports.com/. Contact details follow the existing website. No additional certification claims or project statistics have been added; the supplied logo is displayed as provided.
-
-## Interactive service catalogue
-
-The shared service catalogue in `catalog.py` renders all nine homepage service cards, individual pages at `/services/<slug>`, and JSON responses at `/api/services`. The catalogue API accepts `q` and `category` (`all`, `court`, `field`, `facility`). Unknown API categories return 400; unknown services return 404.
-
-Homepage search combines terms with the selected category, updates the result count, supports an empty state and reset, and retains filters in the URL. Server-rendered query results and detail links work without JavaScript. Service pages preselect the matching enquiry option. Expandable FAQs use native HTML details. Cards animate into view when motion preferences allow it. Customer accounts and bookings are not included. An owner content dashboard is available at `/dashboard`.
-
-## Content dashboard
-
-`/dashboard` provides password-protected editing for homepage text, service entries and carousel slides. Images (PNG/JPEG/WebP, up to 2 MB and 20 megapixels) are validated server-side and stored in a private Vercel Blob store. Only website images are delivered through the public `/media/<opaque-id>` route. Service visibility, service addition/removal and slide reordering are supported. Changes affect the public pages after Publish.
-
-`BLOB_READ_WRITE_TOKEN` is automatically supplied by the connected `likitha-sports-content` Vercel Blob store. Do not commit tokens. There is no production filesystem persistence or client-only persistence. Published content is stored as immutable timestamped JSON versions; reads select the latest version. Prior versions are retained. Publishing checks the editor revision to detect an already-published update. Concurrent publishes that start at exactly the same time may both be retained, with the newest version taking effect.
-
-### Owner setup
-
-First-time setup at `/dashboard/setup` is permitted **only on a Preview deployment protected by Vercel Authentication**, or in explicit local test mode. Production rejects the setup endpoint. The setup deployment must never be made public or have Deployment Protection disabled. The first successful setup stores a PBKDF2-SHA256 password hash and random signing key in private Blob storage; subsequent setup attempts are refused atomically by a non-overwriting object creation. After setup, sign in at the production `/dashboard` URL with the password you chose.
-
-The dashboard uses signed eight-hour HttpOnly/SameSite=Strict cookies, Secure cookies on Vercel, origin checks and session-specific CSRF tokens on writes. Login attempts are rate-limited per IP and 15-minute bucket in persistent storage. Signing out clears the browser cookie. Do not use shared computers without signing out.
-
-Content editing is intended for a small owner-managed site. There is one admin password, no customer registration and no public upload endpoint. All write endpoints require admin authentication except the protected first-time setup flow.
-
-### Checks
-
-Run `python -m unittest discover -s tests -v`. Tests use an isolated temporary storage adapter enabled through `CMS_TEST_DIR`; the adapter is ignored on Vercel. The production app always uses Vercel Blob. `CMS_DEV_SETUP=1` is a local testing option and is not deployed.
+`npm test` runs the public route, login, image upload, authenticated publish and gallery checks against a temporary directory.
