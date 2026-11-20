@@ -7,7 +7,7 @@
     <figure class="feature-box about-photo">
       <div class="about-photo-frame">
       {% if photo %}
-      <img src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" width="1080" height="1920" loading="lazy">
+      <img src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" width="600" height="600" loading="lazy">
       {% else %}
       <svg aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="8" width="38" height="32" rx="4"/><circle cx="16" cy="18" r="3"/><path d="m6 35 10-10 7 7 8-11 11 13"/></svg>
       {% endif %}
