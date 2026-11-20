@@ -19,6 +19,7 @@ PREFIX = 'likitha-cms/'
 MAX_IMAGE = 2 * 1024 * 1024
 MAX_BODY = 3 * 1024 * 1024
 COOKIE = 'likitha_admin'
+GALLERY_PAGES = ('about-us', 'projects', 'clients', 'testimonials')
 
 
 class CmsError(Exception):
@@ -29,6 +30,7 @@ class CmsError(Exception):
 
 def defaults():
     return {'revision': 'default', 'updated_at': None,
+            'logo': None, 'galleries': {page: [] for page in GALLERY_PAGES},
             'hero': {'line1': 'Great spaces.', 'line2': 'Greater games.', 'description': 'Courts, turfs and sports infrastructure. From your first idea to the first game.'},
             'slides': [
                 {'title': 'More room for your game.', 'category': 'FIELDS & TURFS / 01', 'image': 'football-truf.webp', 'alt': 'Football turf'},
@@ -86,7 +88,10 @@ def load_content(strict=False):
         versions = sorted(list_objects('published/'))
         if not versions:
             return defaults()
-        return json.loads(read_object(versions[-1]))
+        content = json.loads(read_object(versions[-1]))
+        content.setdefault('logo', None)
+        content.setdefault('galleries', {page: [] for page in GALLERY_PAGES})
+        return content
     except Exception:
         if strict:
             raise CmsError('Content storage could not be read. Please retry.', 503)
@@ -126,6 +131,23 @@ def validate_content(raw):
     if not isinstance(hero, dict):
         raise CmsError('Invalid homepage content.')
     data = {'hero': {'line1': text(hero.get('line1'), 'Headline line 1', 60), 'line2': text(hero.get('line2'), 'Headline line 2', 60), 'description': text(hero.get('description'), 'Homepage description', 300)}}
+    data['logo'] = image_value(raw.get('logo'))
+    galleries = raw.get('galleries', {})
+    if not isinstance(galleries, dict):
+        raise CmsError('Invalid page galleries.')
+    data['galleries'] = {}
+    for page in GALLERY_PAGES:
+        items = galleries.get(page, [])
+        if not isinstance(items, list) or len(items) > 100:
+            raise CmsError('Each page can hold up to 100 gallery photos.')
+        data['galleries'][page] = []
+        for item in items:
+            if not isinstance(item, dict):
+                raise CmsError('Invalid gallery photo.')
+            data['galleries'][page].append({
+                'image': image_value(item.get('image'), True),
+                'alt': text(item.get('alt'), 'Photo description', 150)
+            })
     slides = raw.get('slides')
     if not isinstance(slides, list) or not 1 <= len(slides) <= 6:
         raise CmsError('Add between one and six carousel slides.')
@@ -319,6 +341,8 @@ def handle(environ, start_response):
             current = load_content(strict=True)
             if data.get('revision') != current['revision']:
                 raise CmsError('The website changed in another tab. Reload its latest content before saving.', 409)
+            for field in ('logo', 'galleries'):
+                data.setdefault(field, current[field])
             content = validate_content(data)
             content['revision'] = secrets.token_hex(16)
             content['updated_at'] = int(time.time())

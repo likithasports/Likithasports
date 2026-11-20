@@ -64,6 +64,25 @@ class DashboardFlow(unittest.TestCase):
   status,body,headers=self.request(data['url']);self.assertEqual(status,200);self.assertEqual(body,raw);self.assertEqual(headers['Content-Type'],'image/png')
   content=self.request('/api/admin/content',auth=True)[1];content['services'][0]['image']=data['url'];self.assertEqual(self.request('/api/admin/content','POST',content,auth=True)[0],200)
   self.assertIn(data['url'].encode(),self.request('/services/basketball-courts')[1])
+ def test_publish_site_images_and_page_galleries(self):
+  self.setup_owner()
+  buffer = io.BytesIO()
+  Image.new('RGB', (4, 4)).save(buffer, 'PNG')
+  upload = self.request('/api/admin/upload', 'POST', {'data': base64.b64encode(buffer.getvalue()).decode()}, auth=True)
+  self.assertEqual(upload[0], 201)
+  url = upload[1]['url']
+  data = self.request('/api/admin/content', auth=True)[1]
+  data['logo'] = data['services'][0]['image'] = data['slides'][0]['image'] = url
+  for page in cms.GALLERY_PAGES:
+   data['galleries'][page] = [{'image': url, 'alt': 'Uploaded & reviewed'}]
+  self.assertEqual(self.request('/api/admin/content', 'POST', data, auth=True)[0], 200)
+  for page in cms.GALLERY_PAGES:
+   html = self.request('/' + page)[1].decode()
+   self.assertIn(f'src="{url}" alt="Uploaded &amp; reviewed"', html)
+   self.assertIn(f'class="logo" src="{url}"', html)
+  home = self.request('/')[1].decode()
+  self.assertIn(f'class="card-image"><img src="{url}"', home)
+  self.assertIn(f'id="hero-image" src="{url}"', home)
  def test_invalid_content_and_no_public_secrets(self):
   self.setup_owner();data=cms.defaults();data['hero']['line1']='<script>alert(1)</script>'
   self.assertEqual(self.request('/api/admin/content','POST',data,auth=True)[0],200)

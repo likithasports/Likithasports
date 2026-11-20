@@ -49,7 +49,7 @@ PAGE = r'''<!doctype html>
 
 /* Multi-page navigation and project galleries */
 .links{gap:clamp(10px,1.6vw,24px);flex-wrap:wrap}.links>a{white-space:nowrap}.nav{height:auto;min-height:94px}.page-intro{padding:80px 0 55px;background:var(--pale)}.page-intro h1{font-size:clamp(38px,5vw,64px);max-width:900px}.page-intro p{max-width:680px;color:var(--muted)}.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.feature-box{padding:30px;border:1px solid var(--line);border-radius:8px;background:white;min-height:210px}.feature-box h3{color:var(--navy);margin-top:0}.feature-box p{font-size:14px;color:var(--muted)}.project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.project-tile{aspect-ratio:1;position:relative;overflow:hidden;border-radius:8px;background:var(--navy)}.project-tile img{width:100%;height:100%;object-fit:cover;transition:transform .35s}.project-tile:hover img{transform:scale(1.06)}.project-tile .tile-caption{position:absolute;inset:auto 0 0;padding:35px 20px 20px;background:linear-gradient(transparent,#071331e8);color:white;font-weight:700}.notice-panel{padding:38px;background:var(--pale);border-left:4px solid var(--green);max-width:800px}.notice-panel p{color:var(--muted)}@media(max-width:850px){.links{gap:12px;font-size:12px}.logo{width:170px}.nav{gap:12px}.links .btn{padding:10px}}@media(max-width:720px){.feature-grid,.project-grid{grid-template-columns:1fr 1fr}.page-intro{padding:55px 0 35px}.nav{min-height:79px}.links{gap:18px;font-size:14px}.logo{width:210px}}@media(max-width:480px){.feature-grid,.project-grid{grid-template-columns:1fr}}
-</style></head>
+.gallery-photo{margin:0}.gallery-photo img{display:block;width:100%;aspect-ratio:1;object-fit:contain;background:#f4f6fa}.gallery-photo figcaption{padding:.65rem 0}</style></head>
 <body><a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap"><span>SPORTS SURFACES & SPORTS SUPPLIERS</span><span class="location">Built for schools. Academies. Communities.</span><a href="tel:+918179655506">Call +91 81796 55506 ↗</a></div></div>
 <header><div class="wrap nav"><a href="/" aria-label="Likitha Sports home"><img class="logo" src="/logo.png?v=2" width="300" height="100" alt="Likitha Sports Surfaces & Sports Suppliers"></a><button class="menu" aria-expanded="false" aria-controls="navigation">Menu</button><nav class="links" id="navigation" aria-label="Main navigation"><a href="/">Home</a><a href="/about-us">About us</a><a href="/projects">Projects</a><a href="/clients">Clients</a><a href="/testimonials">Testimonials</a><a href="#contact">Contact</a><a class="btn" href="#contact">Start your project <span aria-hidden="true">↗</span></a></nav></div></header>
@@ -98,11 +98,18 @@ def render_card(service, number, visible=True):
     title = escape(s['title'])
     search_text = escape(' '.join([s['title'], s['summary'], CATEGORIES[s['category']], *s['scope']]).casefold(), quote=True)
     if s['image']:
-        visual = '<div class="card-image"><img src="https://likithasports.com/assets/home/' + escape(s['image']) + '" alt="' + title + '" width="600" height="400" loading="lazy"></div>'
+        visual = '<div class="card-image"><img src="' + escape(cms.image_url(s['image']), quote=True) + '" alt="' + title + '" width="600" height="400" loading="lazy"></div>'
     else:
         visual = service_icon(s['category'], number)
     hidden = '' if visible else ' hidden'
     return f'<article class="card" data-category="{s["category"]}" data-slug="{s["slug"]}" data-search="{search_text}"{hidden}>{visual}<div class="card-body"><span class="label">{escape(CATEGORIES[s["category"]]).upper()} / {number:02}</span><h3>{title}</h3><p>{escape(s["summary"])}</p><a href="/services/{s["slug"]}">Explore solution <span aria-hidden="true">↗</span></a></div></article>'
+
+
+def branded_page(content):
+    if content.get('logo'):
+        url = escape(cms.image_url(content['logo']), quote=True)
+        return PAGE.replace('/logo.png?v=2', url).replace(' type="image/png"', '')
+    return PAGE
 
 
 def home_page(query_string='', content=None):
@@ -115,7 +122,7 @@ def home_page(query_string='', content=None):
         category = 'all'
     matches = {s['slug'] for s in find_services(query, category, services)}
     cards = ''.join(render_card(s, i, s['slug'] in matches) for i, s in enumerate(services, 1))
-    page = PAGE.replace('__SERVICE_CARDS__', cards)
+    page = branded_page(content).replace('__SERVICE_CARDS__', cards)
     page = page.replace('placeholder="Search courts, pools, tracks…" value=""', 'placeholder="Search courts, pools, tracks…" value="' + escape(query, quote=True) + '"')
     page = page.replace('name="category" value="all"', 'name="category" value="' + category + '"')
     for key in ('all', *CATEGORIES):
@@ -206,7 +213,16 @@ def section_page(name):
         body = '<section class="section"><div class="wrap"><div class="notice-panel"><h2>Our clients</h2><p>Verified client names and logos will appear here once approved for publication.</p><a class="btn green" href="/#contact">Discuss a project ↗</a></div></div></section>'
     else:
         body = '<section class="section"><div class="wrap"><div class="notice-panel"><h2>Client testimonials</h2><p>We will share genuine client feedback here when it is available and approved for publication.</p><a class="btn green" href="/#contact">Contact our team ↗</a></div></div></section>'
-    shell = PAGE
+    photos = content.get('galleries', {}).get(name, [])
+    if photos:
+        figures = []
+        for photo in photos:
+            url = escape(cms.image_url(photo['image']), quote=True)
+            label = escape(photo['alt'], quote=True)
+            figures.append(f'<figure class="gallery-photo"><img src="{url}" alt="{label}" loading="lazy"><figcaption>{label}</figcaption></figure>')
+        gallery = '<section class="section"><div class="wrap"><div class="project-grid">' + ''.join(figures) + '</div></div></section>'
+        body = body + gallery if name == 'about-us' else gallery
+    shell = branded_page(content)
     head_end = shell.index('<main id="main">')
     foot_start = shell.index('</main><footer>')
     page = shell[:head_end] + '<main id="main">' + intro + body + shell[foot_start:]
