@@ -29,8 +29,9 @@ module.exports = function validate(raw) {
     galleries[page] = array(raw.galleries?.[page] ?? [],0,100,'gallery photo').map(p => ({image:image(p?.image,true), alt:text(p.alt,'Photo description',150)}));
   }
   const aboutCards = array(raw.aboutCards,6,6,'About Us card').map(card => ({
-    title: text(card?.title,'Card heading',100),
-    description: text(card?.description,'Card text',500),
+    title: text(card?.title,'Name',100),
+    designation: card.designation ? text(card.designation,'Designation',150) : '',
+    description: text(card?.description,'Profile paragraph',5000),
     image: image(card.image),
     alt: card.alt ? text(card.alt,'Photo caption',150) : ''
   }));

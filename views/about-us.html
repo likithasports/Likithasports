@@ -12,7 +12,11 @@
       </div>
       <figcaption>
         <h3>{{ box.title }}</h3>
-        <p>{{ box.description }}</p>
+        {% if box.designation %}<p class="profile-designation">{{ box.designation }}</p>{% endif %}
+        <details class="profile-bio">
+          <summary><span class="when-closed">Read more</span><span class="when-open">Read less</span><span class="profile-context"> about {{ box.title }}</span></summary>
+          <p>{{ box.description }}</p>
+        </details>
         {% if box.image and box.alt %}<p>{{ box.alt }}</p>{% endif %}
       </figcaption>
     </figure>
