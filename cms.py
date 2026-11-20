@@ -181,6 +181,22 @@ def validate_content(raw):
 
 
 def admin_record():
+    # An operator-managed credential reset takes precedence over legacy Blob login.
+    configured = os.environ.get('CMS_ADMIN_CREDENTIALS')
+    if configured is not None:
+        try:
+            record = json.loads(configured)
+            if not isinstance(record, dict):
+                raise ValueError()
+            username = record.get('username')
+            if not isinstance(username, str) or not 1 <= len(username) <= 100:
+                raise ValueError()
+            for field, size in (('salt', 32), ('key', 64), ('password', 64)):
+                if not isinstance(record.get(field), str) or not re.fullmatch('[a-f0-9]{' + str(size) + '}', record[field]):
+                    raise ValueError()
+            return record
+        except (ValueError, TypeError):
+            raise CmsError('Dashboard sign-in configuration needs attention.', 503)
     body = read_object('auth/admin.json')
     return json.loads(body) if body else None
 
@@ -268,7 +284,7 @@ def handle(environ, start_response):
                 return response(start_response, 405, {'error': 'Use GET.'}, [('Allow', 'GET')])
             record = admin_record()
             session = session_for(environ, record)
-            return response(start_response, 200, {'configured': bool(record), 'authenticated': bool(session), 'csrf': session['csrf'] if session else None, 'setup_allowed': bool(setup_allowed(environ)), 'setup_url': os.environ.get('CMS_SETUP_URL') if not record else None})
+            return response(start_response, 200, {'configured': bool(record), 'username_required': bool(record and record.get('username')), 'authenticated': bool(session), 'csrf': session['csrf'] if session else None, 'setup_allowed': bool(setup_allowed(environ)), 'setup_url': os.environ.get('CMS_SETUP_URL') if not record else None})
         if path == '/api/admin/content' and method == 'GET':
             if not session_for(environ, admin_record()):
                 raise CmsError('Sign in to manage website content.', 401)
@@ -306,8 +322,11 @@ def handle(environ, start_response):
                 raise CmsError('Too many sign-in attempts. Try again in 15 minutes.', 429)
             write_object(attempt_prefix + secrets.token_hex(8) + '.json', b'{}')
             password = data.get('password')
-            if not isinstance(password, str) or len(password) > 200 or not hmac.compare_digest(password_hash(password, record['salt']), record['password']):
-                raise CmsError('The password is incorrect.', 401)
+            username = data.get('username', '')
+            valid_password = isinstance(password, str) and len(password) <= 200 and hmac.compare_digest(password_hash(password, record['salt']), record['password'])
+            valid_username = not record.get('username') or (isinstance(username, str) and len(username) <= 100 and hmac.compare_digest(username.encode(), record['username'].encode()))
+            if not valid_password or not valid_username:
+                raise CmsError('The username or password is incorrect.', 401)
             cookie, session = session_cookie(record, environ)
             return response(start_response, 200, {'ok': True, 'csrf': session['csrf']}, [('Set-Cookie', cookie)])
         session = session_for(environ, record)
