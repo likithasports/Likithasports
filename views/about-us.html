@@ -1,27 +1,24 @@
 <section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>About us</h1><p>We plan and build sports spaces for schools, academies and communities.</p></div></section>
 <section class="section" aria-label="About Us photos">
   <div class="wrap feature-grid">
-    {% set boxes = [["Our mission","Make quality sports infrastructure accessible to more communities."],["Court construction","Sports court planning, surfacing and installation."],["Turfs and tracks","Purpose-built spaces for training and recreation."],["Project planning","A clear scope shaped around your site and requirements."],["Materials and finishes","Practical surface options suited to intended use."],["From idea to play","Support from initial planning through project delivery."]] %}
-    {% for box in boxes %}
-    {% set photo = photos[loop.index0] %}
+    {% for box in aboutCards %}
     <figure class="feature-box about-photo">
       <div class="about-photo-frame">
-      {% if photo %}
-      <img src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" width="600" height="600" loading="lazy">
+      {% if box.image %}
+      <img src="{{ box.image | imageUrl }}" alt="{{ box.alt or box.title }}" width="600" height="600" loading="lazy">
       {% else %}
       <svg aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="8" width="38" height="32" rx="4"/><circle cx="16" cy="18" r="3"/><path d="m6 35 10-10 7 7 8-11 11 13"/></svg>
       {% endif %}
       </div>
       <figcaption>
-        <h3>{{ box[0] }}</h3>
-        <p>{{ box[1] }}</p>
-        {% if photo and photo.alt %}<p>{{ photo.alt }}</p>{% endif %}
+        <h3>{{ box.title }}</h3>
+        <p>{{ box.description }}</p>
+        {% if box.image and box.alt %}<p>{{ box.alt }}</p>{% endif %}
       </figcaption>
     </figure>
     {% endfor %}
   </div>
 </section>
-{% if photos.length > 6 %}
-  {% set photos = photos.slice(6) %}
+{% if photos.length %}
   {% include "gallery.html" %}
 {% endif %}

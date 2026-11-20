@@ -28,5 +28,11 @@ module.exports = function validate(raw) {
   for (const page of Object.keys(sections)) {
     galleries[page] = array(raw.galleries?.[page] ?? [],0,100,'gallery photo').map(p => ({image:image(p?.image,true), alt:text(p.alt,'Photo description',150)}));
   }
-  return {logo:image(raw.logo), galleries, services, slides, hero:{line1:text(hero.line1,'Headline',60), line2:text(hero.line2,'Headline',60), description:text(hero.description,'Description',300)}};
+  const aboutCards = array(raw.aboutCards,6,6,'About Us card').map(card => ({
+    title: text(card?.title,'Card heading',100),
+    description: text(card?.description,'Card text',500),
+    image: image(card.image),
+    alt: card.alt ? text(card.alt,'Photo caption',150) : ''
+  }));
+  return {logo:image(raw.logo), aboutCards, galleries, services, slides, hero:{line1:text(hero.line1,'Headline',60), line2:text(hero.line2,'Headline',60), description:text(hero.description,'Description',300)}};
 };

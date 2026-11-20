@@ -160,5 +160,43 @@
       "prompt": "Tell us about your existing or proposed court and the equipment you need.",
       "published": true
     }
+  ],
+  "aboutCards": [
+    {
+      "title": "Our mission",
+      "description": "Make quality sports infrastructure accessible to more communities.",
+      "image": null,
+      "alt": ""
+    },
+    {
+      "title": "Court construction",
+      "description": "Sports court planning, surfacing and installation.",
+      "image": null,
+      "alt": ""
+    },
+    {
+      "title": "Turfs and tracks",
+      "description": "Purpose-built spaces for training and recreation.",
+      "image": null,
+      "alt": ""
+    },
+    {
+      "title": "Project planning",
+      "description": "A clear scope shaped around your site and requirements.",
+      "image": null,
+      "alt": ""
+    },
+    {
+      "title": "Materials and finishes",
+      "description": "Practical surface options suited to intended use.",
+      "image": null,
+      "alt": ""
+    },
+    {
+      "title": "From idea to play",
+      "description": "Support from initial planning through project delivery.",
+      "image": null,
+      "alt": ""
+    }
   ]
 }

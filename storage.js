@@ -47,7 +47,14 @@ async function list(key) {
 async function content(strict = false) {
   try {
     const latest = (await list('published/')).sort().at(-1);
-    return latest ? {...defaults, ...JSON.parse(await read(latest))} : defaults;
+    if (!latest) return defaults;
+    const saved = JSON.parse(await read(latest));
+    if (!saved.aboutCards) {
+      const photos = saved.galleries?.['about-us'] || [];
+      saved.aboutCards = defaults.aboutCards.map((card, index) => ({...card, ...photos[index]}));
+      saved.galleries = {...defaults.galleries, ...saved.galleries, 'about-us': photos.slice(6)};
+    }
+    return {...defaults, ...saved};
   } catch (e) { if (strict) fail('Content storage could not be read.', 503); return defaults; }
 }
 module.exports = {read, write, list, content, fail};

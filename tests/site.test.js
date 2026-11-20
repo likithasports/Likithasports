@@ -41,11 +41,17 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   const {url} = await upload.json();
   assert.deepEqual(Buffer.from(await (await fetch(base+url)).arrayBuffer()),file);
   data.galleries.projects = [{image:url,alt:'Published project'}];
+  assert.equal(data.aboutCards.length,6);
+  data.aboutCards[3] = {image:url,alt:'Court build',title:'Our team',description:'Site team'};
   data.hero.line1 = 'Published headline';
   const publish = await post('content',data);
   assert.equal(publish.status,200);
   assert.equal((await post('content',data)).status,409);
   assert.match(await (await fetch(base+'/')).text(), /Published headline/);
   assert.match(await (await fetch(base+'/projects')).text(), /Published project/);
+  const about = await (await fetch(base+'/about-us')).text();
+  assert.ok(about.includes(url) && about.includes('<h3>Our team</h3>') && about.includes('Site team'));
+  const saved = await (await fetch(base+'/api/admin/content',{headers:{cookie}})).json();
+  assert.deepEqual(saved.aboutCards[3],data.aboutCards[3]);
   assert.equal((await post('logout',{})).status,200);
 });
