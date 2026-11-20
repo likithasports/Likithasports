@@ -1,3 +1,20 @@
 <section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>About us</h1><p>We plan and build sports spaces for schools, academies and communities.</p></div></section>
-<section class="section"><div class="wrap"><h2>What we do</h2><div class="feature-grid"><article class="feature-box"><h3>Our mission</h3><p>Make quality sports infrastructure accessible to more communities.</p></article><article class="feature-box"><h3>Court construction</h3><p>Sports court planning, surfacing and installation.</p></article><article class="feature-box"><h3>Turfs and tracks</h3><p>Purpose-built spaces for training and recreation.</p></article><article class="feature-box"><h3>Project planning</h3><p>A clear scope shaped around your site and requirements.</p></article><article class="feature-box"><h3>Materials and finishes</h3><p>Practical surface options suited to intended use.</p></article><article class="feature-box"><h3>From idea to play</h3><p>Support from initial planning through project delivery.</p></article></div></div></section>
-{% if photos.length %}{% include "gallery.html" %}{% endif %}
+<section class="section" aria-label="About Us photos">
+  <div class="wrap feature-grid">
+    {% for i in range(0, 6) %}
+    {% set photo = photos[i] %}
+    <figure class="feature-box about-photo"{% if not photo %} aria-label="Photo slot {{ loop.index }} awaiting upload"{% endif %}>
+      {% if photo %}
+      <img src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" width="1080" height="1080" loading="lazy">
+      <figcaption>{{ photo.alt }}</figcaption>
+      {% else %}
+      <svg aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="8" width="38" height="32" rx="4"/><circle cx="16" cy="18" r="3"/><path d="m6 35 10-10 7 7 8-11 11 13"/></svg>
+      {% endif %}
+    </figure>
+    {% endfor %}
+  </div>
+</section>
+{% if photos.length > 6 %}
+  {% set photos = photos.slice(6) %}
+  {% include "gallery.html" %}
+{% endif %}
