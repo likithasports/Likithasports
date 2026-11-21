@@ -1,39 +1,44 @@
 <section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>Projects</h1><p>Explore the sports surfaces and facilities we work on.</p></div></section>
-{% if projectSlides.length %}
-<section class="section" aria-label="Project slideshow"><div class="wrap">
-{% for slide in projectSlides %}
-<figure class="gallery-photo" style="max-width:500px;margin-inline:auto" data-project-slide {% if not loop.first %}hidden{% endif %}>
-<img width="500" height="500" style="height:auto" src="{{ slide.image | imageUrl }}" alt="{{ slide.alt }}" {% if not loop.first %}loading="lazy"{% endif %}>
-<figcaption>{% if slide.title %}<h2>{{ slide.title }}</h2>{% endif %}{% if slide.description %}<p style="white-space:pre-line">{{ slide.description }}</p>{% endif %}<p>{{ slide.alt }}</p></figcaption>
+<section class="section" aria-label="Project galleries"><div class="wrap project-row">
+{% for project in projectCards %}
+<article class="project-box">
+{% if project.photos.length %}
+{% for photo in project.photos %}
+<figure class="gallery-photo" data-project-photo {% if not loop.first %}hidden{% endif %}>
+<img width="500" height="500" src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" loading="lazy">
+<figcaption>{{ photo.alt }}</figcaption>
 </figure>
 {% endfor %}
-{% if projectSlides.length > 1 %}
+{% if project.title %}<h2>{{ project.title }}</h2>{% endif %}
+{% if project.description %}<p class="project-description">{{ project.description }}</p>{% endif %}
+{% else %}
+<div class="project-placeholder">Project {{ loop.index | pad }}</div>
+{% endif %}
+</article>
+{% endfor %}
+</div></section>
 <script>
 (()=>{
-  const slides=Array.from(document.querySelectorAll('[data-project-slide]'));
+  const groups=Array.from(document.querySelectorAll('.project-box'),box=>({
+    photos:box.querySelectorAll('[data-project-photo]'),index:0
+  })).filter(group=>group.photos.length>1);
+  if(!groups.length)return;
   const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
-  let index=0, timer;
-  function advance(){
-    slides[index].hidden=true;
-    index=(index+1)%slides.length;
-    slides[index].hidden=false;
-  }
+  let timer;
   function schedule(){
     clearInterval(timer);
-    if(motion.matches){
-      slides.forEach(slide=>{slide.hidden=false});
-      return;
-    }
-    slides.forEach((slide,i)=>{slide.hidden=i!==index});
-    if(!document.hidden)timer=setInterval(advance,4000);
+    for(const group of groups)group.photos.forEach((photo,i)=>photo.hidden=!motion.matches&&i!==group.index);
+    if(document.hidden||motion.matches)return;
+    timer=setInterval(()=>{
+      for(const group of groups){
+        group.photos[group.index].hidden=true;
+        group.index=(group.index+1)%group.photos.length;
+        group.photos[group.index].hidden=false;
+      }
+    },4000);
   }
-  document.addEventListener('visibilitychange',schedule);
   motion.addEventListener('change',schedule);
+  document.addEventListener('visibilitychange',schedule);
   schedule();
 })();
 </script>
-{% endif %}
-</div></section>
-{% else %}
-<section class="section"><div class="wrap"><h2>Project gallery coming soon</h2></div></section>
-{% endif %}

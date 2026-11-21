@@ -33,6 +33,12 @@ function render(url, data) {
   const slides = data.slides.map(s => ({...s, image: imageUrl(s.image)}));
   const related = detail ? services.filter(s => s !== detail).sort((a,b) =>
     Number(b.category === detail.category) - Number(a.category === detail.category)).slice(0,3) : [];
+  const projectCards = [];
+  if (section === 'projects') {
+    projectCards.push(...(data.projects || []).filter(project => project.photos.length));
+    for (const photo of data.galleries?.projects || []) projectCards.push({photos:[photo]});
+    while (projectCards.length < 5) projectCards.push({photos:[]});
+  }
   const html = env.render('home.html', {
     hero: data.hero, slides, slidesJson: JSON.stringify(slides).replaceAll('<', '\\u003c'),
     logo: data.logo ? imageUrl(data.logo) : '/logo.png?v=2', categories, services, query, category,
@@ -40,10 +46,7 @@ function render(url, data) {
     number: String(services.indexOf(detail) + 1).padStart(2, '0'),
     section: isSection ? section + '.html' : null, title: detail?.title || sections[section],
     revision: data.revision,
-    projectSlides: section === 'projects' ? [
-      ...(data.projects || []).flatMap((project,slot) => project.photos.map(photo => ({...photo, projectSlot:slot, title:project.title, description:project.description}))),
-      ...(data.galleries?.projects || [])
-    ] : [],
+    projectCards,
     aboutCards: data.aboutCards, photos: data.galleries?.[section] || [], hasImages: services.some(s => s.image)
   });
   return {html};
