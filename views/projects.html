@@ -1,8 +1,48 @@
-<section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>Projects</h1><p>Explore the sports surfaces and facilities we work on.</p></div></section>
-{% for project in projects %}
-<section class="section"><div class="wrap"><h2>{{ project.title }}</h2><div class="project-grid">
-{% for photo in project.photos %}<figure class="gallery-photo"><img src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" loading="lazy"><figcaption>{{ photo.alt }}</figcaption></figure>{% endfor %}
-</div></div></section>
+<section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>Projects</h1><p>Explore the sports surfaces and facilities we work on.</p><a class="btn" href="/dashboard/projects?add=1">Add project</a></div></section>
+{% if projectSlides.length %}
+<section class="section" aria-label="Project slideshow"><div class="wrap" style="max-width:760px">
+{% for slide in projectSlides %}
+<figure class="gallery-photo" data-project-slide {% if not loop.first %}hidden{% endif %}>
+<img src="{{ slide.image | imageUrl }}" alt="{{ slide.alt }}" {% if not loop.first %}loading="lazy"{% endif %}>
+<figcaption>{% if slide.title %}<h2>{{ slide.title }}</h2>{% endif %}{% if slide.description %}<p style="white-space:pre-line">{{ slide.description }}</p>{% endif %}<p>{{ slide.alt }}</p></figcaption>
+</figure>
 {% endfor %}
-{% if not photos.length and not projects.length %}<section class="section"><div class="wrap"><h2>Project gallery coming soon</h2></div></section>{% endif %}
-{% if photos.length %}{% include "gallery.html" %}{% endif %}
+{% if projectSlides.length > 1 %}
+<div id="project-controls" hidden>
+<button type="button" class="btn" data-prev aria-label="Previous project photo">Previous</button>
+<button type="button" class="btn" data-play>Pause</button>
+<button type="button" class="btn" data-next aria-label="Next project photo">Next</button>
+<span data-count></span>
+</div>
+<script>
+(()=>{
+  const controls=document.getElementById('project-controls');
+  const slides=Array.from(document.querySelectorAll('[data-project-slide]'));
+  const play=controls.querySelector('[data-play]');
+  let index=0, timer;
+  let paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function show(next){
+    slides[index].hidden=true;
+    index=(next+slides.length)%slides.length;
+    slides[index].hidden=false;
+    controls.querySelector('[data-count]').textContent=(index+1)+' / '+slides.length;
+  }
+  function schedule(){
+    clearInterval(timer);
+    if(!paused&&!document.hidden)timer=setInterval(()=>show(index+1),4000);
+    play.textContent=paused?'Play':'Pause';
+  }
+  controls.querySelector('[data-prev]').onclick=()=>{show(index-1);schedule()};
+  controls.querySelector('[data-next]').onclick=()=>{show(index+1);schedule()};
+  play.onclick=()=>{paused=!paused;schedule()};
+  document.addEventListener('visibilitychange',schedule);
+  controls.hidden=false;
+  show(0);
+  schedule();
+})();
+</script>
+{% endif %}
+</div></section>
+{% else %}
+<section class="section"><div class="wrap"><h2>Project gallery coming soon</h2></div></section>
+{% endif %}

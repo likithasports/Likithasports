@@ -35,8 +35,9 @@ module.exports = function validate(raw) {
     image: image(card.image),
     alt: card.alt ? text(card.alt,'Photo caption',150) : ''
   }));
-  const projects = raw.projects === undefined ? undefined : array(raw.projects,5,5,'project').map(project => ({
+  const projects = raw.projects === undefined ? undefined : array(raw.projects,0,100,'project').map(project => ({
     title:text(project?.title,'Project name',100),
+    description:project.description?.trim() ? text(project.description,'Project description',2000) : '',
     photos:array(project.photos,0,100,'project photo').map(p => ({image:image(p?.image,true), alt:text(p.alt,'Photo description',150)}))
   }));
   return {projects, logo:image(raw.logo), aboutCards, galleries, services, slides, hero:{line1:text(hero.line1,'Headline',60), line2:text(hero.line2,'Headline',60), description:text(hero.description,'Description',300)}};

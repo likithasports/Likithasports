@@ -5,7 +5,7 @@
 </style></head><body><div id="loading" class="loading">Opening your content dashboard…</div>
 <div id="auth" class="auth" hidden><div class="auth-card"><img src="/logo.png?v=2" alt="Likitha Sports"><p class="eyebrow">Website management</p><h1 id="auth-title">Sign in to your dashboard.</h1><p class="muted" id="auth-copy">Manage your services, homepage and carousel images.</p><div id="auth-error" class="notice error" role="alert" hidden></div><form id="auth-form"><div id="username-wrap" hidden><label for="username">Username</label><input id="username" name="username" type="text" autocomplete="username" maxlength="100" autocapitalize="none" spellcheck="false"></div><label for="password" id="password-label">Admin password</label><input id="password" type="password" autocomplete="current-password" required maxlength="200"><div id="confirm-wrap" hidden style="margin-top:15px"><label for="confirm-password">Confirm password</label><input id="confirm-password" type="password" autocomplete="new-password" maxlength="200"></div><button class="btn green" id="auth-submit" type="submit">Sign in</button></form><a id="setup-link" class="btn green" hidden>Set admin password ↗</a><a href="/">← Back to your website</a></div></div>
 <div id="app" class="shell" hidden><aside class="sidebar"><a class="brand" href="/" target="_blank" rel="noopener"><img src="/logo.png?v=2" alt="Likitha Sports"></a><small>CONTENT WORKSPACE</small><nav class="side-tabs" aria-label="Dashboard sections"><button type="button" data-tab="images" aria-selected="true">Images</button><button type="button" data-tab="homepage" aria-selected="false">01 &nbsp; Homepage</button><button type="button" data-tab="services" aria-selected="false">02 &nbsp; Services</button><button type="button" data-tab="carousel" aria-selected="false">03 &nbsp; Carousel</button><button type="button" data-tab="about" aria-selected="false">04 &nbsp; About Us</button><button type="button" data-tab="projects" aria-selected="false">05 &nbsp; Projects</button></nav><div class="side-bottom">Your website. Your next update.<a href="/" target="_blank" rel="noopener">View live website ↗</a></div></aside><div class="workspace"><header class="top"><strong>LIKITHA / CONTENT DASHBOARD</strong><div><span id="save-state" class="publish-state">All changes published</span><button id="publish" class="btn green" type="button">Publish changes ↗</button><button id="logout" class="btn outline" type="button">Sign out</button></div></header><main class="main"><div class="heading"><div><p class="eyebrow">Keep your website moving</p><h1>Your content, in your control.</h1><p class="muted">Update your content here, then publish it to your live website.</p></div><a class="btn outline" href="/" target="_blank" rel="noopener">View website ↗</a></div><div id="editor-error" class="notice error" role="alert" hidden></div><div class="stats"><div class="stat"><b id="stat-services">—</b><span>Published services</span></div><div class="stat"><b id="stat-slides">—</b><span>Carousel slides</span></div><div class="stat"><b id="stat-updated" style="font-size:15px;line-height:2.5">—</b><span>Last published</span></div></div>
-<section id="tab-images"><div class="panel"><h2 id="upload-heading">Website images</h2><p id="upload-help">Choose where the image should appear. For a page gallery, you can select several photos at once.</p><fieldset id="image-controls" style="border:0;padding:0;margin:0"><label><span id="destination-label">Image destination</span><select id="image-destination"></select></label><label id="project-name-field" hidden>Project name<input id="project-name" maxlength="100"></label><div id="image-previews"></div><label class="upload-label">Upload photos<input id="image-files" type="file" accept="image/jpeg,image/png,image/webp"></label><p class="hint">JPEG, PNG or WebP. Up to 2 MB and 20 megapixels per image.</p></fieldset><p role="status" id="image-result"></p></div></section>
+<section id="tab-images"><div class="panel"><h2 id="upload-heading">Website images</h2><p id="upload-help">Choose where the image should appear. For a page gallery, you can select several photos at once.</p><button type="button" class="btn outline" id="add-project" hidden>Add project</button><fieldset id="image-controls" style="border:0;padding:0;margin:0"><label><span id="destination-label">Image destination</span><select id="image-destination"></select></label><label id="project-name-field" hidden>Project name<input id="project-name" maxlength="100"></label><label id="project-description-field" hidden>Project description<textarea id="project-description" maxlength="2000" rows="3"></textarea></label><label class="upload-label">Upload photos<input id="image-files" type="file" accept="image/jpeg,image/png,image/webp"></label><p class="hint">JPEG, PNG or WebP. Up to 2 MB and 20 megapixels per image.</p><div id="image-previews"></div></fieldset><p role="status" id="image-result"></p></div></section>
 <section id="tab-about" hidden><h2>About Us photos</h2><p>Upload a square photo and edit the name, designation, and paragraph for each profile. Select Publish changes to update the About Us page.</p><div id="about-editor"></div></section>
 <section id="tab-homepage" hidden><div class="panel"><div class="panel-head"><div><h2>The first impression.</h2><p class="muted">Edit the main headline and introduction on your homepage.</p></div></div><div class="fields"><div><label for="hero-line1">Headline — line 1</label><input id="hero-line1" data-hero="line1" maxlength="60"></div><div><label for="hero-line2">Headline — green line</label><input id="hero-line2" data-hero="line2" maxlength="60"></div><div class="full"><label for="hero-description">Introduction</label><textarea id="hero-description" data-hero="description" maxlength="300"></textarea><p class="hint">Keep it short and clear. Maximum 300 characters.</p></div></div></div><div class="notice">Images and edits are saved online. Uploading an image does not change your live page until you publish.</div></section>
 <section id="tab-services" hidden><div class="panel-head"><div><h2>Every solution, one place.</h2><p class="muted">Choose a service to edit its text, image and visibility.</p></div><button class="btn outline" type="button" id="add-service">+ Add service</button></div><div class="editor-layout"><div class="service-list" id="service-list" aria-label="Select a service"></div><div class="panel" id="service-editor"></div></div></section>
@@ -21,7 +21,7 @@ function errorBox(id,message){$(id).textContent=message;$(id).hidden=!message}
 async function api(path,options={}){const headers={'Content-Type':'application/json',...(csrf?{'X-CSRF-Token':csrf}:{}),...options.headers};const res=await fetch(path,{credentials:'same-origin',cache:'no-store',...options,headers});const data=await res.json();if(!res.ok){if(res.status===401&&path!='/api/admin/login'){showAuth({configured:true});}throw new Error(data.error||'The request could not be completed.')}return data}
 function showAuth(status){$('loading').hidden=true;$('app').hidden=true;$('auth').hidden=false;if(typeof status.username_required==='boolean')usernameRequired=status.username_required;$('username-wrap').hidden=!usernameRequired;$('username').required=usernameRequired;setupMode=!status.configured&&status.setup_allowed&&location.pathname==='/dashboard/setup';if(!status.configured&&!setupMode){$('auth-form').hidden=true;$('auth-title').textContent='One private setup step.';$('auth-copy').textContent='Create your admin password on the private setup page. Vercel sign-in is required. Then return here to sign in.';const link=$('setup-link');if(status.setup_url){link.href=status.setup_url;link.hidden=false}return}$('setup-link').hidden=true;$('auth-form').hidden=false;$('auth-title').textContent=setupMode?'Create your admin password.':'Sign in to your dashboard.';$('auth-copy').textContent=setupMode?'Choose a unique password of at least 14 characters. This setup page closes after the password is created.':'Manage your services, homepage and carousel images.';$('auth-submit').textContent=setupMode?'Create password & open dashboard':'Sign in';$('confirm-wrap').hidden=!setupMode;$('password').autocomplete=setupMode?'new-password':'current-password';$('password').minLength=setupMode?14:1;$('confirm-password').required=setupMode}
 $('auth-form').addEventListener('submit',async e=>{e.preventDefault();errorBox('auth-error','');if(setupMode&&$('password').value!==$('confirm-password').value){errorBox('auth-error','The passwords do not match.');return}$('auth-submit').disabled=true;try{const result=await api(setupMode?'/api/admin/setup':'/api/admin/login',{method:'POST',body:JSON.stringify({username:$('username').value,password:$('password').value})});csrf=result.csrf;$('password').value='';$('confirm-password').value='';await openDashboard()}catch(error){errorBox('auth-error',error.message)}finally{$('auth-submit').disabled=false}});
-async function openDashboard(){content=await api('/api/admin/content');dirty=false;$('auth').hidden=true;$('loading').hidden=true;$('app').hidden=false;document.querySelectorAll('[data-hero]').forEach(input=>{input.value=content.hero[input.dataset.hero]});renderServices();renderSlides();renderAbout();selectTab(location.pathname.replace(/\/$/, '')==='/dashboard/projects'?'projects':'images');stats();$('save-state').textContent='All changes published'}
+async function openDashboard(){content=await api('/api/admin/content');dirty=false;$('auth').hidden=true;$('loading').hidden=true;$('app').hidden=false;document.querySelectorAll('[data-hero]').forEach(input=>{input.value=content.hero[input.dataset.hero]});renderServices();renderSlides();renderAbout();selectTab(location.pathname.replace(/\/$/, '')==='/dashboard/projects'?'projects':'images');if(location.pathname.startsWith('/dashboard/projects')&&location.search==='?add=1')addProject();stats();$('save-state').textContent='All changes published'}
 function stats(){$('stat-services').textContent=content.services.filter(s=>s.published).length;$('stat-slides').textContent=content.slides.length;$('stat-updated').textContent=content.updated_at?new Date(content.updated_at*1000).toLocaleDateString(undefined,{day:'numeric',month:'short'}):'Original content'}
 function selectTab(name){
   const projects=name==='projects';
@@ -32,7 +32,9 @@ function selectTab(name){
   $('upload-heading').textContent=projects?'Project photos':'Website images';
   $('upload-help').textContent=projects?'Choose a project, add photos, then select Publish changes.':'Choose where the image should appear. For a page gallery, you can select several photos at once.';
   $('destination-label').textContent=projects?'Select project':'Image destination';
+  $('add-project').hidden=!projects;
   $('project-name-field').hidden=!projects;
+  $('project-description-field').hidden=!projects;
   $('image-result').textContent='';
   renderImages(projects);
 }
@@ -93,7 +95,10 @@ function renderImages(projects){
 function imageDestination(){return destinations.find(item=>item.key===$('image-destination').value)}
 function showImageDestination(){
   const item=imageDestination(), gallery=item.gallery;
-  if(item.project)$('project-name').value=item.project.title;
+  if(item.project){
+    $('project-name').value=item.project.title;
+    $('project-description').value=item.project.description||'';
+  }
   $('image-files').multiple=Boolean(gallery);
   $('image-files').value='';
   const field=item.field||'image';
@@ -105,6 +110,26 @@ function showImageDestination(){
       (gallery?'<label>Photo description<input data-description="'+i+'" maxlength="150" value="'+esc(photo.alt)+'"></label><button type="button" class="btn outline" data-remove="'+i+'">Remove photo</button>':'')+'</div></div>';
   }).join('');
 }
+function addProject(){
+  if(uploads)return;
+  const projects=content.projects;
+  let index=projects.findIndex((p,i)=>!p.photos.length&&!p.description&&p.title==='Project '+String(i+1).padStart(2,'0'));
+  if(index===-1){
+    if(projects.length>=100){notify('The dashboard holds up to 100 projects.',true);return}
+    index=projects.length;
+    projects.push({title:'Project '+String(index+1).padStart(2,'0'),description:'',photos:[]});
+    renderImages(true);
+    markDirty();
+  }
+  $('image-destination').value='project-'+index;
+  $('image-result').textContent='';
+  showImageDestination();
+  $('image-controls').scrollIntoView({block:'start'});
+  $('project-name').focus();
+  $('project-name').select();
+}
+$('add-project').onclick=addProject;
+$('project-description').oninput=e=>{imageDestination().project.description=e.target.value;markDirty()};
 $('project-name').oninput=e=>{imageDestination().project.title=e.target.value;markDirty()};
 $('image-destination').onchange=()=>{$('image-result').textContent='';showImageDestination()};
 $('image-previews').oninput=e=>{
