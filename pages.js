@@ -39,8 +39,9 @@ function render(url, data) {
     count: matches.length, detail, selected: detail?.slug, related,
     number: String(services.indexOf(detail) + 1).padStart(2, '0'),
     section: isSection ? section + '.html' : null, title: detail?.title || sections[section],
+    revision: data.revision,
     projectSlides: section === 'projects' ? [
-      ...(data.projects || []).flatMap(project => project.photos.map(photo => ({...photo, title:project.title, description:project.description}))),
+      ...(data.projects || []).flatMap((project,slot) => project.photos.map(photo => ({...photo, projectSlot:slot, title:project.title, description:project.description}))),
       ...(data.galleries?.projects || [])
     ] : [],
     aboutCards: data.aboutCards, photos: data.galleries?.[section] || [], hasImages: services.some(s => s.image)

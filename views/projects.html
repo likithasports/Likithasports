@@ -4,7 +4,10 @@
 {% for slide in projectSlides %}
 <figure class="gallery-photo" data-project-slide {% if not loop.first %}hidden{% endif %}>
 <img src="{{ slide.image | imageUrl }}" alt="{{ slide.alt }}" {% if not loop.first %}loading="lazy"{% endif %}>
-<figcaption>{% if slide.title %}<h2>{{ slide.title }}</h2>{% endif %}{% if slide.description %}<p style="white-space:pre-line">{{ slide.description }}</p>{% endif %}<p>{{ slide.alt }}</p></figcaption>
+<figcaption>{% if slide.title %}<h2>{{ slide.title }}</h2>{% endif %}{% if slide.description %}<p style="white-space:pre-line">{{ slide.description }}</p>{% endif %}<p>{{ slide.alt }}</p>{% if slide.projectSlot is defined %}<div class="project-actions">
+<a class="btn" href="/dashboard/projects?action=edit&amp;slot={{ slide.projectSlot }}&amp;revision={{ revision }}" aria-label="Edit {{ slide.title }}">Edit project</a>
+<a class="btn" href="/dashboard/projects?action=delete&amp;slot={{ slide.projectSlot }}&amp;revision={{ revision }}" aria-label="Delete {{ slide.title }}">Delete project</a>
+</div>{% endif %}</figcaption>
 </figure>
 {% endfor %}
 {% if projectSlides.length > 1 %}
@@ -29,7 +32,7 @@
   }
   function schedule(){
     clearInterval(timer);
-    if(!paused&&!document.hidden)timer=setInterval(()=>show(index+1),4000);
+    if(!paused&&!document.hidden)timer=setInterval(()=>{if(!slides[index].contains(document.activeElement))show(index+1)},4000);
     play.textContent=paused?'Play':'Pause';
   }
   controls.querySelector('[data-prev]').onclick=()=>{show(index-1);schedule()};
