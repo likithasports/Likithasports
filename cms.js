@@ -104,14 +104,19 @@ async function handle(req, res, path) {
   }
   if (path === '/api/admin/upload') {
     if (typeof data.data !== 'string' || !/^[A-Za-z0-9+/]+=*$/.test(data.data)) fail('Choose a valid image.');
-    const bytes = Buffer.from(data.data,'base64');
+    let bytes = Buffer.from(data.data,'base64');
     if (!bytes.length || bytes.length > 2*1024*1024) fail('Images must be under 2 MB.',413);
     let format;
     try {
       const image = sharp(bytes,{limitInputPixels:20000000,failOn:'warning'});
       ({format} = await image.metadata());
       if (!['png','jpeg','webp'].includes(format)) throw Error();
-      await image.stats();
+      if (data.destination === 'projects') {
+        bytes = await image.rotate().resize(1080,1080,{fit:'contain',background:'#f4f6fa'}).webp({quality:88}).toBuffer();
+        format = 'webp';
+      } else {
+        await image.stats();
+      }
     } catch { fail('Choose a PNG, JPEG or WebP image under 20 megapixels.'); }
     const key = 'media/' + hex(16) + '.' + (format === 'jpeg' ? 'jpg' : format);
     await store.write(key,bytes,'image/'+format);
