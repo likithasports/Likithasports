@@ -2,8 +2,8 @@
 {% if projectSlides.length %}
 <section class="section" aria-label="Project slideshow"><div class="wrap">
 {% for slide in projectSlides %}
-<figure class="gallery-photo" style="max-width:1080px;margin-inline:auto" data-project-slide {% if not loop.first %}hidden{% endif %}>
-<img width="1080" height="1080" style="height:auto" src="{{ slide.image | imageUrl }}" alt="{{ slide.alt }}" {% if not loop.first %}loading="lazy"{% endif %}>
+<figure class="gallery-photo" style="max-width:500px;margin-inline:auto" data-project-slide {% if not loop.first %}hidden{% endif %}>
+<img width="500" height="500" style="height:auto" src="{{ slide.image | imageUrl }}" alt="{{ slide.alt }}" {% if not loop.first %}loading="lazy"{% endif %}>
 <figcaption>{% if slide.title %}<h2>{{ slide.title }}</h2>{% endif %}{% if slide.description %}<p style="white-space:pre-line">{{ slide.description }}</p>{% endif %}<p>{{ slide.alt }}</p></figcaption>
 </figure>
 {% endfor %}
