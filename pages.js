@@ -39,6 +39,7 @@ function render(url, data) {
     count: matches.length, detail, selected: detail?.slug, related,
     number: String(services.indexOf(detail) + 1).padStart(2, '0'),
     section: isSection ? section + '.html' : null, title: detail?.title || sections[section],
+    projects: (data.projects || []).filter(project => project.photos.length),
     aboutCards: data.aboutCards, photos: data.galleries?.[section] || [], hasImages: services.some(s => s.image)
   });
   return {html};

@@ -1,3 +1,8 @@
 <section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>Projects</h1><p>Explore the sports surfaces and facilities we work on.</p></div></section>
-{% if not photos.length %}{% if hasImages %}<section class="section"><div class="wrap"><h2>Sports infrastructure gallery</h2><p>Illustrative service imagery; completed-project photographs can be added as they become available.</p><div class="project-grid">{% for s in services %}{% if s.image %}<a class="project-tile" href="/services/{{ s.slug }}"><img src="{{ s.image | imageUrl }}" alt="{{ s.title }}" loading="lazy"><span class="tile-caption">{{ s.title }} ↗</span></a>{% endif %}{% endfor %}</div></div></section>{% else %}<section class="section"><div class="wrap"><h2>Project gallery coming soon</h2></div></section>{% endif %}{% endif %}
+{% for project in projects %}
+<section class="section"><div class="wrap"><h2>{{ project.title }}</h2><div class="project-grid">
+{% for photo in project.photos %}<figure class="gallery-photo"><img src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" loading="lazy"><figcaption>{{ photo.alt }}</figcaption></figure>{% endfor %}
+</div></div></section>
+{% endfor %}
+{% if not photos.length and not projects.length %}{% if hasImages %}<section class="section"><div class="wrap"><h2>Sports infrastructure gallery</h2><p>Illustrative service imagery; completed-project photographs can be added as they become available.</p><div class="project-grid">{% for s in services %}{% if s.image %}<a class="project-tile" href="/services/{{ s.slug }}"><img src="{{ s.image | imageUrl }}" alt="{{ s.title }}" loading="lazy"><span class="tile-caption">{{ s.title }} ↗</span></a>{% endif %}{% endfor %}</div></div></section>{% else %}<section class="section"><div class="wrap"><h2>Project gallery coming soon</h2></div></section>{% endif %}{% endif %}
 {% if photos.length %}{% include "gallery.html" %}{% endif %}

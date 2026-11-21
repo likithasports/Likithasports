@@ -10,7 +10,7 @@ async function route(req, res) {
   const pathname = url.pathname;
   if (pathname.startsWith('/api/admin/') || pathname.startsWith('/media/')) return cms.handle(req,res,pathname);
   if (!['GET','HEAD'].includes(req.method)) return {status:405, allow:'GET, HEAD'};
-  if (['/dashboard','/dashboard/','/dashboard/setup'].includes(pathname)) {
+  if (['/dashboard','/dashboard/','/dashboard/setup','/dashboard/projects','/dashboard/projects/'].includes(pathname)) {
     res.setHeader('Cache-Control','no-store');
     res.setHeader('X-Robots-Tag','noindex, nofollow');
     res.setHeader('X-Frame-Options','DENY');
