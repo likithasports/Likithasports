@@ -4,5 +4,5 @@
 {% for photo in project.photos %}<figure class="gallery-photo"><img src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" loading="lazy"><figcaption>{{ photo.alt }}</figcaption></figure>{% endfor %}
 </div></div></section>
 {% endfor %}
-{% if not photos.length and not projects.length %}{% if hasImages %}<section class="section"><div class="wrap"><h2>Sports infrastructure gallery</h2><p>Illustrative service imagery; completed-project photographs can be added as they become available.</p><div class="project-grid">{% for s in services %}{% if s.image %}<a class="project-tile" href="/services/{{ s.slug }}"><img src="{{ s.image | imageUrl }}" alt="{{ s.title }}" loading="lazy"><span class="tile-caption">{{ s.title }} ↗</span></a>{% endif %}{% endfor %}</div></div></section>{% else %}<section class="section"><div class="wrap"><h2>Project gallery coming soon</h2></div></section>{% endif %}{% endif %}
+{% if not photos.length and not projects.length %}<section class="section"><div class="wrap"><h2>Project gallery coming soon</h2></div></section>{% endif %}
 {% if photos.length %}{% include "gallery.html" %}{% endif %}
