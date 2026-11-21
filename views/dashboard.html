@@ -82,7 +82,11 @@ const galleryNames={'about-us':'Additional About Us photos','projects':'Projects
 let destinations=[];
 function renderImages(projects){
   const select=$('image-destination'), previous=select.value;
-  if(!content.projects)content.projects=Array.from({length:5},(_,i)=>({title:'Project '+String(i+1).padStart(2,'0'),photos:[]}));
+  if(!content.projects)content.projects=[];
+  while(content.projects.length<15){
+    const number=String(content.projects.length+1).padStart(2,'0');
+    content.projects.push({title:'Project '+number,description:'',photos:[]});
+  }
   destinations=projects?content.projects.map((project,i)=>({key:'project-'+i,label:'Project '+String(i+1).padStart(2,'0'),project,gallery:project.photos})):[
     {key:'logo',label:'Website logo',target:content,field:'logo'},
     ...content.slides.map((target,i)=>({key:'slide-'+i,label:'Carousel · '+(i+1)+' · '+target.title,target})),

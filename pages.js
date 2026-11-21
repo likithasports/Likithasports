@@ -37,7 +37,7 @@ function render(url, data) {
   if (section === 'projects') {
     projectCards.push(...(data.projects || []).filter(project => project.photos.length));
     for (const photo of data.galleries?.projects || []) projectCards.push({photos:[photo]});
-    while (projectCards.length < 5) projectCards.push({photos:[]});
+    while (projectCards.length < 15) projectCards.push({photos:[]});
   }
   const html = env.render('home.html', {
     hero: data.hero, slides, slidesJson: JSON.stringify(slides).replaceAll('<', '\\u003c'),
