@@ -112,7 +112,7 @@ async function handle(req, res, path) {
       ({format} = await image.metadata());
       if (!['png','jpeg','webp'].includes(format)) throw Error();
       if (data.destination === 'projects') {
-        bytes = await image.rotate().resize(500,500,{fit:'contain',background:'#f4f6fa'}).webp({quality:88}).toBuffer();
+        bytes = await image.rotate().resize(1080,1080,{fit:'contain',background:'#f4f6fa'}).webp({quality:88}).toBuffer();
         format = 'webp';
       } else {
         await image.stats();
