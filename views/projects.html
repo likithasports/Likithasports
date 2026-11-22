@@ -1,6 +1,13 @@
-<section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>Projects</h1><p>Explore the sports surfaces and facilities we work on.</p></div></section>
-<section class="section" aria-label="Project galleries"><div class="wrap project-row">
-{% for project in projectCards %}
+{% if section %}<section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>Projects</h1><p>Explore the sports surfaces and facilities we work on.</p></div></section>{% endif %}
+<section class="section" aria-label="Project galleries"><div class="wrap">
+{% if not section %}<div class="section-head"><h2>Projects</h2></div>{% endif %}
+{% for row in projectCards | batch(5) %}
+{% set offset = loop.index0 * 5 %}
+<div class="project-lane" tabindex="0" role="group" aria-label="Project row {{ loop.index }}">
+<div class="project-track">
+{% for copy in [0, 1] %}
+<div class="project-group"{% if copy %} aria-hidden="true" inert{% endif %}>
+{% for project in row %}
 <article class="project-box">
 {% if project.photos.length %}
 {% for photo in project.photos %}
@@ -12,9 +19,13 @@
 {% if project.title %}<h2>{{ project.title }}</h2>{% endif %}
 {% if project.description %}<p class="project-description">{{ project.description }}</p>{% endif %}
 {% else %}
-<div class="project-placeholder">Project {{ loop.index | pad }}</div>
+<div class="project-placeholder">Project {{ (offset + loop.index) | pad }}</div>
 {% endif %}
 </article>
+{% endfor %}
+</div>
+{% endfor %}
+</div></div>
 {% endfor %}
 </div></section>
 <script>

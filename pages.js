@@ -34,10 +34,10 @@ function render(url, data) {
   const related = detail ? services.filter(s => s !== detail).sort((a,b) =>
     Number(b.category === detail.category) - Number(a.category === detail.category)).slice(0,3) : [];
   const projectCards = [];
-  if (section === 'projects') {
+  if (!pathname || section === 'projects') {
     projectCards.push(...(data.projects || []).filter(project => project.photos.length));
     for (const photo of data.galleries?.projects || []) projectCards.push({photos:[photo]});
-    while (projectCards.length < 15) projectCards.push({photos:[]});
+    while (section === 'projects' && projectCards.length < 15) projectCards.push({photos:[]});
   }
   const html = env.render('home.html', {
     hero: data.hero, slides, slidesJson: JSON.stringify(slides).replaceAll('<', '\\u003c'),
