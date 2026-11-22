@@ -12,7 +12,7 @@
 {% if project.photos.length %}
 {% for photo in project.photos %}
 <figure class="gallery-photo" data-project-photo {% if not loop.first %}hidden{% endif %}>
-<img width="1080" height="1080" src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" loading="lazy">
+<img width="500" height="500" src="{{ photo.image | imageUrl }}" alt="{{ photo.alt }}" loading="lazy">
 <figcaption>{{ photo.alt }}</figcaption>
 </figure>
 {% endfor %}
