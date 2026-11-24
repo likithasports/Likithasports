@@ -7,9 +7,8 @@
 <section class="section" id="home-projects" aria-labelledby="home-projects-heading">
   <div class="wrap">
     <div class="section-head"><h2 id="home-projects-heading">Projects</h2></div>
-    {% if projectCards.length %}
     <div class="project-lane" role="region" tabindex="0" aria-label="Scrolling projects">
-      <div class="project-track" style="animation-duration: {{ projectCards.length * 12 + 8 }}s">
+      <div class="project-track" style="animation-duration: {{ (projectCards.length if projectCards.length > 5 else 5) * 6.4 }}s">
       {% for copy in [0, 1] %}
       <div class="project-group"{% if copy %} aria-hidden="true" inert{% endif %}>
       {% for project in projectCards %}
@@ -24,13 +23,13 @@
         {% if project.description %}<p class="project-description">{{ project.description }}</p>{% endif %}
       </article>
       {% endfor %}
+      {% for index in range(projectCards.length, 5) %}
+      <div class="project-box home-project"><div class="project-placeholder">Project {{ (index + 1) | pad }}</div></div>
+      {% endfor %}
       </div>
       {% endfor %}
       </div>
     </div>
-    {% else %}
-    <a class="btn outline" href="/projects">View projects ↗</a>
-    {% endif %}
   </div>
 </section>
 <script>
