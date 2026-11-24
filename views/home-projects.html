@@ -1,6 +1,6 @@
 {% macro projectPhoto(photo, loopCopy) %}
 <figure class="gallery-photo"{% if loopCopy %} data-loop-photo aria-hidden="true"{% endif %}>
-  <img width="500" height="500" src="{{ photo.image | imageUrl }}" alt="{% if not loopCopy %}{{ photo.alt }}{% endif %}" loading="lazy">
+  <img width="600" height="600" src="{{ photo.image | imageUrl }}" alt="{% if not loopCopy %}{{ photo.alt }}{% endif %}" loading="lazy">
   {% if photo.alt %}<figcaption>{{ photo.alt }}</figcaption>{% endif %}
 </figure>
 {% endmacro %}
