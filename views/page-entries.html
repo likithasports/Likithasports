@@ -1,0 +1,9 @@
+<section class="section"><div class="wrap project-grid">
+  {% for entry in entries %}
+  <article class="notice-panel">
+    {% if entry.image %}<img src="{{ entry.image | imageUrl }}" alt="{{ entry.alt }}" style="max-width:100%;height:auto" loading="lazy">{% endif %}
+    <h2>{{ entry.name }}</h2>
+    <p style="white-space:pre-line">{{ entry.description }}</p>
+  </article>
+  {% endfor %}
+</div></section>

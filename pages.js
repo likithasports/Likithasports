@@ -77,6 +77,8 @@ function render(url, data) {
     number: String(services.indexOf(detail) + 1).padStart(2, '0'),
     section: isSection ? section + '.html' : null, title: detail?.title || sections[section],
     revision: data.revision,
+    intro: data.pageIntros?.[section] || defaults.pageIntros[section],
+    entries: data.entries?.[section] || [],
     projectCards,
     policeSportsComplex,
     aboutCards: aboutProfileIndexes(data.aboutCards).map(index => data.aboutCards[index]),

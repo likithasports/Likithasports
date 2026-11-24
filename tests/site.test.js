@@ -20,7 +20,7 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   const post = (endpoint,data) => fetch(base+'/api/admin/'+endpoint,{method:'POST',headers:{
     'content-type':'application/json', origin:base, cookie:cookie || '', 'x-csrf-token':csrf || ''
   },body:JSON.stringify(data)});
-  for (const endpoint of ['/','/dashboard','/about-us','/projects','/clients','/testimonials','/services/athletic-track','/logo.png','/healthz']) {
+  for (const endpoint of ['/','/dashboard','/dashboard/clients','/dashboard/testimonials','/about-us','/projects','/clients','/testimonials','/services/athletic-track','/logo.png','/healthz']) {
     assert.equal((await fetch(base+endpoint)).status,200,endpoint);
   }
   assert.equal((await fetch(base+'/services/missing')).status,404);
@@ -61,6 +61,9 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   ]}];
   assert.equal(data.aboutCards.length,6);
   data.aboutCards[3] = {image:url,alt:'Court build',title:'Our team',designation:'Coach',description:'Site team'};
+  data.pageIntros.clients.description = 'Published client introduction';
+  data.entries.clients = [{name:'Example school', description:'Outdoor court', image:url, alt:'School court'}];
+  data.entries.testimonials = [{name:'Example partner', description:'Excellent <work>', image:null, alt:''}];
   data.hero.line1 = 'Published headline';
   const publish = await post('content',data);
   assert.equal(publish.status,200);
@@ -74,6 +77,11 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.match(projects, /Published project/);
   assert.match(projects, /Police Sports Complex, Rajahmundry/);
   assert.match(await (await fetch(base+'/clients')).text(), /SP Office, Rajahmundry/);
+  const clients = await (await fetch(base+'/clients')).text();
+  assert.ok(clients.includes('Published client introduction') && clients.includes('Example school') && clients.includes(url));
+  const testimonials = await (await fetch(base+'/testimonials')).text();
+  assert.match(testimonials, /Excellent &lt;work&gt;/);
+  assert.doesNotMatch(testimonials, /We will share genuine client feedback/);
   const about = await (await fetch(base+'/about-us')).text();
   assert.ok(about.includes(url) && about.includes('<h3>Our team</h3>') && about.includes('Site team'));
   assert.match(about, /profile-designation">Coach</);

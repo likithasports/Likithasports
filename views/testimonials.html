@@ -1,3 +1,4 @@
-<section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>Testimonials</h1><p>Feedback from our clients and partners.</p></div></section>
-{% if not photos.length %}<section class="section"><div class="wrap"><div class="notice-panel"><h2>Client testimonials</h2><p>We will share genuine client feedback here when it is available and approved for publication.</p><a class="btn green" href="/#contact">Contact our team ↗</a></div></div></section>{% endif %}
+<section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>{{ intro.title }}</h1><p>{{ intro.description }}</p></div></section>
+{% if not photos.length and not entries.length %}<section class="section"><div class="wrap"><div class="notice-panel"><h2>Client testimonials</h2><p>We will share genuine client feedback here when it is available and approved for publication.</p><a class="btn green" href="/#contact">Contact our team ↗</a></div></div></section>{% endif %}
+{% if entries.length %}{% include "page-entries.html" %}{% endif %}
 {% if photos.length %}{% include "gallery.html" %}{% endif %}

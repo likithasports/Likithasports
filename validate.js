@@ -1,5 +1,5 @@
 const {fail} = require('./storage');
-const {sections, categories} = require('./pages');
+const {sections, categories, defaults} = require('./pages');
 function text(value, label, limit) {
   if (typeof value !== 'string' || !value.trim() || value.trim().length > limit) fail(label + ' must contain 1–' + limit + ' characters.');
   return value.trim();
@@ -40,5 +40,18 @@ module.exports = function validate(raw) {
     description:project.description?.trim() ? text(project.description,'Project description',2000) : '',
     photos:array(project.photos,0,100,'project photo').map(p => ({image:image(p?.image,true), alt:text(p.alt,'Photo description',150)}))
   }));
-  return {projects, logo:image(raw.logo), aboutCards, galleries, services, slides, hero:{line1:text(hero.line1,'Headline',60), line2:text(hero.line2,'Headline',60), description:text(hero.description,'Description',300)}};
+  const pageIntros = {};
+  for (const page of Object.keys(sections)) {
+    const intro = raw.pageIntros?.[page] ?? defaults.pageIntros[page];
+    pageIntros[page] = {title:text(intro.title,'Page title',100), description:text(intro.description,'Page introduction',500)};
+  }
+  const entries = {};
+  for (const page of ['clients','testimonials']) {
+    entries[page] = array(raw.entries?.[page] ?? [],0,100,page).map(entry => ({
+      name:text(entry?.name,'Client name',100),
+      description:page === 'clients' && !entry.description?.trim() ? '' : text(entry.description,'Entry text',3000),
+      image:image(entry.image), alt:entry.alt ? text(entry.alt,'Photo description',150) : ''
+    }));
+  }
+  return {entries, pageIntros, projects, logo:image(raw.logo), aboutCards, galleries, services, slides, hero:{line1:text(hero.line1,'Headline',60), line2:text(hero.line2,'Headline',60), description:text(hero.description,'Description',300)}};
 };

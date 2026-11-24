@@ -2,6 +2,25 @@
   "revision": "default",
   "updated_at": null,
   "logo": null,
+  "pageIntros": {
+    "about-us": {
+      "title": "About us",
+      "description": "We plan and build sports spaces for schools, academies and communities."
+    },
+    "projects": {
+      "title": "Projects",
+      "description": "Explore the sports surfaces and facilities we work on."
+    },
+    "clients": {
+      "title": "Clients",
+      "description": "Working with organisations that value well-planned sports spaces."
+    },
+    "testimonials": {
+      "title": "Testimonials",
+      "description": "Feedback from our clients and partners."
+    }
+  },
+  "entries": {"clients": [], "testimonials": []},
   "galleries": {
     "about-us": [],
     "projects": [],
