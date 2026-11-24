@@ -1,4 +1,4 @@
 {% set number = loop.index | pad %}
 <article class="card" data-category="{{ s.category }}" data-slug="{{ s.slug }}" data-search="{{ s.search }}" {% if not s.matches %}hidden{% endif %}>
 {% if s.image %}<div class="card-image"><img src="{{ s.image | imageUrl }}" alt="{{ s.title }}" width="600" height="400" loading="lazy"></div>{% else %}{% include "icon.html" %}{% endif %}
-<div class="card-body"><span class="label">{{ categories[s.category] | upper }} / {{ number }}</span><h3>{{ s.title }}</h3><p>{{ s.summary }}</p><a href="/services/{{ s.slug }}">Explore solution <span aria-hidden="true">↗</span></a></div></article>
+<div class="card-body">{% include "photo-credit.html" %}<span class="label">{{ categories[s.category] | upper }} / {{ number }}</span><h3>{{ s.title }}</h3><p>{{ s.summary }}</p><a href="/services/{{ s.slug }}">Explore solution <span aria-hidden="true">↗</span></a></div></article>

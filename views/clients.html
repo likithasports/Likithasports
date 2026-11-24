@@ -1,3 +1,6 @@
 <section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>Clients</h1><p>Working with organisations that value well-planned sports spaces.</p></div></section>
-{% if not photos.length %}<section class="section"><div class="wrap"><div class="notice-panel"><h2>Our clients</h2><p>Verified client names and logos will appear here once approved for publication.</p><a class="btn green" href="/#contact">Discuss a project ↗</a></div></div></section>{% endif %}
+<section class="section"><div class="wrap"><div class="notice-panel">
+  <h2>Our clients</h2>
+  <p><a href="/projects#police-sports-complex">{{ policeSportsComplex.client }} ↗</a></p>
+</div></div></section>
 {% if photos.length %}{% include "gallery.html" %}{% endif %}

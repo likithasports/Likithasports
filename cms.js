@@ -3,6 +3,7 @@ const derive = require('node:util').promisify(crypto.pbkdf2);
 const sharp = require('sharp');
 const store = require('./storage');
 const validate = require('./validate');
+const {aboutProfileIndexes} = require('./pages');
 const {fail} = store;
 const hex = n => crypto.randomBytes(n).toString('hex');
 const hash = async (password, salt) => (await derive(password, Buffer.from(salt, 'hex'), 600000, 32, 'sha256')).toString('hex');
@@ -69,7 +70,8 @@ async function handle(req, res, path) {
   }
   if (path === '/api/admin/content' && req.method === 'GET') {
     if (!session(req,await admin())) fail('Sign in to manage website content.',401);
-    return {json:await store.content(true)};
+    const content = await store.content(true);
+    return {json:{...content, aboutProfileIndexes:aboutProfileIndexes(content.aboutCards)}};
   }
   if (req.method !== 'POST') return {status:405, allow:'POST'};
   let origin;

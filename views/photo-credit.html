@@ -1,0 +1,3 @@
+{% if s.photoCredit %}
+<small class="photo-credit">Example photo by <a href="{{ s.photoCredit.source }}">{{ s.photoCredit.author }}</a>{% if s.photoCredit.license %} · <a href="{{ s.photoCredit.license }}">CC BY 2.0</a> · resized{% endif %}</small>
+{% endif %}

@@ -14,7 +14,11 @@
 <script>
 let content=null,csrf='',currentService=0,dirty=false,setupMode=false,busy=false,uploads=0,usernameRequired=false;
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function imageUrl(image){return !image?'':image.startsWith('/media/')?image:'https://likithasports.com/assets/home/'+image}
+function imageUrl(image){
+  if (!image || image.startsWith('/media/')) return image || '';
+  const bundled = ['basketball.webp','tennis.webp','football-truf.webp','pickleball.webp'];
+  return (bundled.includes(image) ? '/service-photos/' : 'https://likithasports.com/assets/home/') + image;
+}
 function notify(message,error=false){$('toast').textContent=message;$('toast').classList.toggle('error',error);$('toast').hidden=false;clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('toast').hidden=true,4500)}
 function markDirty(){dirty=true;$('save-state').textContent='Unpublished changes'}
 function errorBox(id,message){$(id).textContent=message;$(id).hidden=!message}
@@ -48,8 +52,10 @@ function renderSlides(){$('slides-editor').innerHTML=content.slides.map((s,i)=>`
 $('add-slide').addEventListener('click',()=>{if(content.slides.length>=6){notify('You can add up to six slides.',true);return}content.slides.push({title:'Your next sports space.',category:'SPORTS INFRASTRUCTURE',image:'football-truf.webp',alt:'Football turf'});markDirty();renderSlides();stats()});
 function renderAbout(){
   const editor=$('about-editor');
-  editor.innerHTML=content.aboutCards.map((card,i)=>`<fieldset class="panel" data-card="${i}">
-    <legend>Profile ${i+1}</legend>
+  editor.innerHTML=content.aboutProfileIndexes.map((i,slot)=>{
+    const card=content.aboutCards[i];
+    return `<fieldset class="panel" data-card="${i}">
+    <legend>Profile ${slot+1}</legend>
     <div class="card-image-preview"></div>
     <label class="upload-label">Upload or replace photo<input type="file" accept="image/jpeg,image/png,image/webp"></label>
     <button type="button" class="btn outline" data-remove-photo>Remove photo</button>
@@ -57,7 +63,8 @@ function renderAbout(){
     <label>Designation<input data-field="designation" maxlength="150" value="${esc(card.designation || '')}"></label>
     <label>Paragraph<textarea data-field="description" rows="5" maxlength="5000" required>${esc(card.description)}</textarea></label>
     <label>Photo caption<input data-field="alt" maxlength="150" value="${esc(card.alt)}"></label>
-  </fieldset>`).join('');
+  </fieldset>`;
+  }).join('');
   editor.querySelectorAll('fieldset').forEach(panel=>{
     const card=content.aboutCards[Number(panel.dataset.card)];
     const remove=panel.querySelector('[data-remove-photo]');

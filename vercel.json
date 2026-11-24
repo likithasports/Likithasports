@@ -1,4 +1,4 @@
 {
-  "functions": {"api/site.js": {"includeFiles": "{views/**,assets/logo-transparent.png}"}},
+  "functions": {"api/site.js": {"includeFiles": "{views/**,assets/**}"}},
   "rewrites": [{"source": "/(.*)", "destination": "/api/site"}]
 }

@@ -1,4 +1,12 @@
 {% if section %}<section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>Projects</h1><p>Explore the sports surfaces and facilities we work on.</p></div></section>{% endif %}
+{% if section %}
+<section class="section" id="police-sports-complex" aria-labelledby="police-sports-complex-title">
+  <div class="wrap"><div class="notice-panel">
+    <h2 id="police-sports-complex-title">{{ policeSportsComplex.title }}</h2>
+    <p>{{ policeSportsComplex.description }}</p>
+  </div></div>
+</section>
+{% endif %}
 <section class="section" aria-label="Project galleries"><div class="wrap">
 {% if not section %}<div class="section-head"><h2>Projects</h2></div>{% endif %}
 {% for row in projectCards | batch(5) %}

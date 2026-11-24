@@ -20,7 +20,19 @@ async function route(req, res) {
   }
   if (pathname === '/healthz') return {json:{status:'ok'}};
   if (pathname === '/favicon.ico') return {status:204};
-  if (pathname === '/robots.txt') return {text:'User-agent: *\nAllow: /\n'};
+  if (pathname === '/robots.txt') return {text:`User-agent: *\nAllow: /\nSitemap: ${pages.publicOrigin}/sitemap.xml\n`};
+  if (pathname === '/sitemap.xml') return {
+    text: pages.sitemap(await storage.content()),
+    type: 'application/xml; charset=utf-8'
+  };
+  const servicePhoto = pathname.slice('/service-photos/'.length);
+  if (pathname.startsWith('/service-photos/') && pages.servicePhotos.has(servicePhoto)) {
+    res.setHeader('Cache-Control','public, max-age=86400');
+    return {
+      bytes: await fs.promises.readFile(path.join(__dirname, 'assets', 'service-photos', servicePhoto)),
+      type: 'image/webp'
+    };
+  }
   if (pathname === '/logo.png') {
     res.setHeader('Cache-Control','public, max-age=86400');
     return {bytes:await fs.promises.readFile(path.join(__dirname,'assets/logo-transparent.png')),type:'image/png'};
