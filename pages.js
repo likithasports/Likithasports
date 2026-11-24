@@ -36,8 +36,7 @@ env.addFilter('pad', n => String(n).padStart(2, '0'));
 function aboutProfileIndexes(cards) {
   const active = card => Boolean(card.image || card.designation);
   return cards.map((_, index) => index)
-    .sort((a, b) => Number(active(cards[b])) - Number(active(cards[a])))
-    .slice(0, 4);
+    .sort((a, b) => Number(active(cards[b])) - Number(active(cards[a])));
 }
 
 function render(url, data) {

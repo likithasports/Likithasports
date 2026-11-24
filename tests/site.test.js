@@ -85,10 +85,10 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   const about = await (await fetch(base+'/about-us')).text();
   assert.ok(about.includes(url) && about.includes('<h3>Our team</h3>') && about.includes('Site team'));
   assert.match(about, /profile-designation">Coach</);
-  assert.equal((about.match(/<details class="profile-bio">/g) || []).length,4);
+  assert.equal((about.match(/<details class="profile-bio">/g) || []).length,6);
   const saved = await (await fetch(base+'/api/admin/content',{headers:{cookie}})).json();
   assert.deepEqual(saved.aboutCards[3],data.aboutCards[3]);
-  assert.equal(saved.aboutProfileIndexes.length,4);
+  assert.equal(saved.aboutProfileIndexes.length,6);
   assert.equal(saved.aboutProfileIndexes[0],3);
   assert.equal((await post('logout',{})).status,200);
 });
