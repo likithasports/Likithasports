@@ -1,0 +1,57 @@
+{% macro projectPhoto(photo, loopCopy) %}
+<figure class="gallery-photo"{% if loopCopy %} data-loop-photo aria-hidden="true"{% endif %}>
+  <img width="500" height="500" src="{{ photo.image | imageUrl }}" alt="{% if not loopCopy %}{{ photo.alt }}{% endif %}" loading="lazy">
+  {% if photo.alt %}<figcaption>{{ photo.alt }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+<section class="section" aria-labelledby="home-projects-heading">
+  <div class="wrap">
+    <div class="section-head"><h2 id="home-projects-heading">Projects</h2></div>
+    <div class="home-project-grid">
+      {% for project in projectCards %}
+      <article class="home-project">
+        <div class="home-project-frame"{% if project.photos.length > 1 %} data-home-project-slideshow tabindex="0" role="group" aria-label="{{ project.title or 'Project' }} photos"{% endif %}>
+          {% for photo in project.photos %}
+          {{ projectPhoto(photo) }}
+          {% endfor %}
+          {% if project.photos.length > 1 %}{{ projectPhoto(project.photos[0], true) }}{% endif %}
+        </div>
+        {% if project.title %}<h3>{{ project.title }}</h3>{% endif %}
+        {% if project.description %}<p class="project-description">{{ project.description }}</p>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<script>
+(() => {
+  const frames = Array.from(document.querySelectorAll('[data-home-project-slideshow]'));
+  if (!frames.length) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const canHover = window.matchMedia('(hover: hover)');
+  let timer;
+
+  function advancePhotos() {
+    for (const frame of frames) {
+      const width = frame.clientWidth;
+      if (!width || frame.matches(':focus-within, :active') || (canHover.matches && frame.matches(':hover'))) continue;
+
+      const index = Math.round(frame.scrollLeft / width);
+      const loopIndex = frame.children.length - 1;
+      if (index === loopIndex) frame.scrollTo({left: 0, behavior: 'instant'});
+      const nextIndex = index === loopIndex ? 1 : index + 1;
+      frame.scrollTo({left: nextIndex * width, behavior: 'smooth'});
+    }
+  }
+
+  function schedule() {
+    clearInterval(timer);
+    if (!document.hidden && !reducedMotion.matches) timer = setInterval(advancePhotos, 4000);
+  }
+
+  reducedMotion.addEventListener('change', schedule);
+  document.addEventListener('visibilitychange', schedule);
+  schedule();
+})();
+</script>
