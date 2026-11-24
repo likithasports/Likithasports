@@ -4,12 +4,16 @@
   {% if photo.alt %}<figcaption>{{ photo.alt }}</figcaption>{% endif %}
 </figure>
 {% endmacro %}
-<section class="section" aria-labelledby="home-projects-heading">
+<section class="section" id="home-projects" aria-labelledby="home-projects-heading">
   <div class="wrap">
     <div class="section-head"><h2 id="home-projects-heading">Projects</h2></div>
-    <div class="home-project-grid">
+    {% if projectCards.length %}
+    <div class="project-lane" role="region" tabindex="0" aria-label="Scrolling projects">
+      <div class="project-track" style="animation-duration: {{ projectCards.length * 12 + 8 }}s">
+      {% for copy in [0, 1] %}
+      <div class="project-group"{% if copy %} aria-hidden="true" inert{% endif %}>
       {% for project in projectCards %}
-      <article class="home-project">
+      <article class="project-box home-project">
         <div class="home-project-frame"{% if project.photos.length > 1 %} data-home-project-slideshow tabindex="0" role="group" aria-label="{{ project.title or 'Project' }} photos"{% endif %}>
           {% for photo in project.photos %}
           {{ projectPhoto(photo) }}
@@ -20,7 +24,13 @@
         {% if project.description %}<p class="project-description">{{ project.description }}</p>{% endif %}
       </article>
       {% endfor %}
+      </div>
+      {% endfor %}
+      </div>
     </div>
+    {% else %}
+    <a class="btn outline" href="/projects">View projects ↗</a>
+    {% endif %}
   </div>
 </section>
 <script>

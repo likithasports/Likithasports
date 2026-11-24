@@ -70,6 +70,9 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.equal((await post('content',data)).status,409);
   const home = await (await fetch(base+'/')).text();
   assert.match(home, /Published headline/);
+  assert.ok(home.indexOf('id="home-projects"') > home.indexOf('id="service-cards"'));
+  assert.match(home, /aria-label="Scrolling projects"/);
+  assert.ok(home.includes(projectImage.url) && home.includes('First court photo') && home.includes('Published project'));
   assert.match(home, /data-home-project-slideshow tabindex/);
   assert.match(home, /Shuttle Court/);
   assert.match(home, /rel="canonical" href="https:\/\/www\.likithasports\.in\/"/);
