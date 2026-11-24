@@ -79,7 +79,10 @@ function render(url, data) {
     revision: data.revision,
     intro: data.pageIntros?.[section] || defaults.pageIntros[section],
     entries: data.entries?.[section] || [],
-    projectCards,
+    projectCards: pathname ? projectCards : projectCards.map(project => ({
+      ...project,
+      photos: project.photos.filter(photo => photo.image !== '/media/d18c50e38531292c38d4149074dbabe0.jpg')
+    })).filter(project => project.photos.length),
     policeSportsComplex,
     aboutCards: aboutProfileIndexes(data.aboutCards).map(index => data.aboutCards[index]),
     photos: data.galleries?.[section] || [], hasImages: services.some(s => s.image)
