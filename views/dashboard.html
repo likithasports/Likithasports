@@ -9,9 +9,10 @@
 <h2>Page introduction</h2><label>Page title<input id="intro-title" maxlength="100"></label>
 <label>Introduction<textarea id="intro-description" maxlength="500"></textarea></label></section>
 <section id="tab-entries" hidden><div class="panel-head"><h2 id="entries-heading"></h2><button id="add-entry" class="btn outline" type="button"></button></div><div id="entry-list"></div></section>
+<section id="tab-homepage" hidden><div class="panel"><div class="panel-head"><div><h2>The first impression.</h2><p class="muted">Edit the main headline and introduction on your homepage.</p></div></div><div class="fields"><div><label for="hero-line1">Headline — line 1</label><input id="hero-line1" data-hero="line1" maxlength="60"></div><div><label for="hero-line2">Headline — green line</label><input id="hero-line2" data-hero="line2" maxlength="60"></div><div class="full"><label for="hero-description">Introduction</label><textarea id="hero-description" data-hero="description" maxlength="300"></textarea><p class="hint">Keep it short and clear. Maximum 300 characters.</p></div></div></div><div class="notice">Images and edits are saved online. Uploading an image does not change your live page until you publish.</div></section>
 <section id="tab-images"><div class="panel"><h2 id="upload-heading">Website images</h2><p id="upload-help">Choose where the image should appear. For a page gallery, you can select several photos at once.</p><button type="button" class="btn outline" id="add-project" hidden>Add project</button><fieldset id="image-controls" style="border:0;padding:0;margin:0"><label><span id="destination-label">Image destination</span><select id="image-destination"></select></label><div id="project-actions" class="actions" hidden><button type="button" class="btn outline" id="edit-project">Edit project</button><button type="button" class="btn danger" id="delete-project">Delete project</button></div><label id="project-name-field" hidden>Project name<input id="project-name" maxlength="100"></label><label id="project-description-field" hidden>Project description<textarea id="project-description" maxlength="2000" rows="3"></textarea></label><label class="upload-label">Upload photos<input id="image-files" type="file" accept="image/jpeg,image/png,image/webp"></label><p class="hint">JPEG, PNG or WebP. Up to 2 MB and 20 megapixels per image.</p><div id="image-previews"></div></fieldset><p role="status" id="image-result"></p></div></section>
 <section id="tab-about" hidden><h2>About Us photos</h2><p>Upload a square photo and edit the name, designation, and paragraph for each profile. Select Publish changes to update the About Us page.</p><div id="about-editor"></div></section>
-<section id="tab-homepage" hidden><div class="panel"><div class="panel-head"><div><h2>The first impression.</h2><p class="muted">Edit the main headline and introduction on your homepage.</p></div></div><div class="fields"><div><label for="hero-line1">Headline — line 1</label><input id="hero-line1" data-hero="line1" maxlength="60"></div><div><label for="hero-line2">Headline — green line</label><input id="hero-line2" data-hero="line2" maxlength="60"></div><div class="full"><label for="hero-description">Introduction</label><textarea id="hero-description" data-hero="description" maxlength="300"></textarea><p class="hint">Keep it short and clear. Maximum 300 characters.</p></div></div></div><div class="notice">Images and edits are saved online. Uploading an image does not change your live page until you publish.</div></section>
+
 <section id="tab-services" hidden><div class="panel-head"><div><h2>Every solution, one place.</h2><p class="muted">Choose a service to edit its text, image and visibility.</p></div><button class="btn outline" type="button" id="add-service">+ Add service</button></div><div class="editor-layout"><div class="service-list" id="service-list" aria-label="Select a service"></div><div class="panel" id="service-editor"></div></div></section>
 <section id="tab-carousel" hidden><div class="panel"><div class="panel-head"><div><h2>Give your homepage a new view.</h2><p class="muted">Update slide text and images. The carousel rotates automatically.</p></div><button class="btn outline" id="add-slide" type="button">+ Add slide</button></div><div id="slides-editor"></div></div></section>
 </main></div></div><div class="toast" id="toast" role="status" hidden></div>
@@ -48,13 +49,15 @@ function selectTab(name){
   }
   $('tab-entries').hidden=!hasEntries;
   if(hasEntries)renderEntries(page);
-  const projects=name==='projects';
+  const homepage=name==='homepage';
+  const projects=homepage||name==='projects';
   document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===name)));
   const panel=projects||hasEntries?'images':name;
   for(const id of ['images','about','homepage','services','carousel']) $('tab-'+id).hidden=id!==panel;
+  if(homepage)$('tab-homepage').hidden=false;
   if(panel!=='images')return;
-  $('upload-heading').textContent=projects?'Project photos':'Website images';
-  $('upload-help').textContent=projects?'Choose a project, add photos, then select Publish changes.':'Choose where the image should appear. For a page gallery, you can select several photos at once.';
+  $('upload-heading').textContent=homepage?'Homepage project photos':projects?'Project photos':'Website images';
+  $('upload-help').textContent=homepage?'Select a project box or add a project, upload its photos, then publish. These photos also appear on the Projects page.':projects?'Choose a project, add photos, then select Publish changes.':'Choose where the image should appear. For a page gallery, you can select several photos at once.';
   $('destination-label').textContent=projects?'Select project':'Image destination';
   $('add-project').hidden=!projects;
   $('project-actions').hidden=!projects;
@@ -159,7 +162,7 @@ function renderImages(projects){
     const number=String(content.projects.length+1).padStart(2,'0');
     content.projects.push({title:'Project '+number,description:'',photos:[]});
   }
-  destinations=projects?content.projects.map((project,i)=>({key:'project-'+i,label:'Project '+String(i+1).padStart(2,'0'),project,gallery:project.photos})):[
+  destinations=projects?content.projects.map((project,i)=>({key:'project-'+i,label:String(i+1).padStart(2,'0')+' · '+project.title,project,gallery:project.photos})):[
     {key:'logo',label:'Website logo',target:content,field:'logo'},
     ...content.slides.map((target,i)=>({key:'slide-'+i,label:'Carousel · '+(i+1)+' · '+target.title,target})),
     ...content.services.map(target=>({key:'service-'+target.slug,label:'Service · '+target.title,target})),
