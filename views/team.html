@@ -1,10 +1,12 @@
 <section class="page-intro">
   <div class="wrap"><h1>Team</h1></div>
 </section>
-<section class="section" aria-label="Team members">
+{% for division in teamDivisions %}
+<section class="section" aria-labelledby="{{ division.id }}-heading">
+  <div class="wrap section-head"><h2 id="{{ division.id }}-heading">{{ division.title }}</h2></div>
   <div class="wrap feature-grid">
-    {% for member in teamCards %}
-    {% set name = member.title or ("Team member " ~ loop.index) %}
+    {% for member in division.cards %}
+    {% set name = member.title or (division.title ~ " member " ~ loop.index) %}
     <figure class="feature-box about-photo">
       <div class="about-photo-frame">
         {% if member.image %}
@@ -17,14 +19,15 @@
         <h3>{{ name }}</h3>
         {% if member.designation %}<p class="profile-designation">{{ member.designation }}</p>{% endif %}
         {% if member.description %}
-        <p class="team-description" id="team-description-{{ loop.index }}">{{ member.description }}</p>
-        <button type="button" class="team-bio-toggle" aria-controls="team-description-{{ loop.index }}" aria-expanded="false" hidden><span>Read more</span><span class="profile-context"> about {{ name }}</span></button>
+        <p class="team-description" id="{{ division.id }}-description-{{ loop.index }}">{{ member.description }}</p>
+        <button type="button" class="team-bio-toggle" aria-controls="{{ division.id }}-description-{{ loop.index }}" aria-expanded="false" hidden><span>Read more</span><span class="profile-context"> about {{ name }}</span></button>
         {% endif %}
       </figcaption>
     </figure>
     {% endfor %}
   </div>
 </section>
+{% endfor %}
 <script>
 document.querySelectorAll('.team-bio-toggle').forEach(button => {
   const description = document.getElementById(button.getAttribute('aria-controls'));

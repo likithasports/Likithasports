@@ -84,7 +84,10 @@ function render(url, data) {
     })).filter(project => project.photos.length),
     policeSportsComplex,
     aboutCards: aboutProfileIndexes(data.aboutCards).map(index => data.aboutCards[index]),
-    teamCards: data.teamCards ?? defaults.teamCards,
+    teamDivisions: [
+      {id:'management', title:'Management Team', cards:data.teamCards ?? defaults.teamCards},
+      {id:'team', title:'Team', cards:data.staffCards ?? defaults.staffCards}
+    ],
     photos: data.galleries?.[section] || [], hasImages: services.some(s => s.image)
   });
   return {html};

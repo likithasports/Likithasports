@@ -180,6 +180,11 @@
       "published": true
     }
   ],
+  "staffCards": [
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""}
+  ],
   "teamCards": [
     {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
     {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
