@@ -1,0 +1,47 @@
+<section class="page-intro">
+  <div class="wrap"><h1>Team</h1></div>
+</section>
+<section class="section" aria-label="Team members">
+  <div class="wrap feature-grid">
+    {% for member in teamCards %}
+    {% set name = member.title or ("Team member " ~ loop.index) %}
+    <figure class="feature-box about-photo">
+      <div class="about-photo-frame">
+        {% if member.image %}
+        <img src="{{ member.image | imageUrl }}" alt="{{ member.alt or name }}" width="600" height="600" loading="lazy">
+        {% else %}
+        <svg aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="24" cy="16" r="7"/><path d="M10 39v-3a14 14 0 0 1 28 0v3"/></svg>
+        {% endif %}
+      </div>
+      <figcaption>
+        <h3>{{ name }}</h3>
+        {% if member.designation %}<p class="profile-designation">{{ member.designation }}</p>{% endif %}
+        {% if member.description %}
+        <p class="team-description" id="team-description-{{ loop.index }}">{{ member.description }}</p>
+        <button type="button" class="team-bio-toggle" aria-controls="team-description-{{ loop.index }}" aria-expanded="false" hidden><span>Read more</span><span class="profile-context"> about {{ name }}</span></button>
+        {% endif %}
+      </figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+</section>
+<script>
+document.querySelectorAll('.team-bio-toggle').forEach(button => {
+  const description = document.getElementById(button.getAttribute('aria-controls'));
+  function updatePreview() {
+    if (button.getAttribute('aria-expanded') === 'true') return;
+    description.setAttribute('data-preview', '');
+    button.hidden = description.scrollHeight <= description.clientHeight + 1;
+  }
+  button.addEventListener('click', () => {
+    const expanded = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', String(!expanded));
+    button.firstElementChild.textContent = expanded ? 'Read more' : 'Read less';
+    if (expanded) updatePreview();
+    else description.removeAttribute('data-preview');
+  });
+  updatePreview();
+  const observer = new ResizeObserver(updatePreview);
+  observer.observe(description.parentElement);
+});
+</script>

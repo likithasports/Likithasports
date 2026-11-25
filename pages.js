@@ -3,7 +3,7 @@ const nunjucks = require('nunjucks');
 const defaults = require('./views/defaults.json');
 const env = nunjucks.configure(path.join(__dirname, 'views'), {autoescape: true});
 const categories = {court: 'Courts', field: 'Turfs & tracks', facility: 'Facilities'};
-const sections = {'about-us': 'About us', projects: 'Projects', clients: 'Clients', testimonials: 'Testimonials'};
+const sections = {'about-us': 'About us', team: 'Team', projects: 'Projects', clients: 'Clients', testimonials: 'Testimonials'};
 const publicOrigin = 'https://www.likithasports.in';
 const policeSportsComplex = {
   title: 'Police Sports Complex, Rajahmundry',
@@ -84,6 +84,7 @@ function render(url, data) {
     })).filter(project => project.photos.length),
     policeSportsComplex,
     aboutCards: aboutProfileIndexes(data.aboutCards).map(index => data.aboutCards[index]),
+    teamCards: data.teamCards ?? defaults.teamCards,
     photos: data.galleries?.[section] || [], hasImages: services.some(s => s.image)
   });
   return {html};

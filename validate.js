@@ -1,5 +1,5 @@
 const {fail} = require('./storage');
-const {sections, categories, defaults} = require('./pages');
+const {categories, defaults} = require('./pages');
 function text(value, label, limit) {
   if (typeof value !== 'string' || !value.trim() || value.trim().length > limit) fail(label + ' must contain 1–' + limit + ' characters.');
   return value.trim();
@@ -25,7 +25,7 @@ module.exports = function validate(raw) {
   if (!services.some(s => s.published)) fail('Keep at least one service published.');
   const slides = array(raw.slides,1,6,'slide').map(s => ({title:text(s?.title,'Slide title',100), category:text(s.category,'Category',70), alt:text(s.alt,'Description',150), image:image(s.image,true)}));
   const galleries = {};
-  for (const page of Object.keys(sections)) {
+  for (const page of Object.keys(defaults.galleries)) {
     galleries[page] = array(raw.galleries?.[page] ?? [],0,100,'gallery photo').map(p => ({image:image(p?.image,true), alt:text(p.alt,'Photo description',150)}));
   }
   const aboutCards = array(raw.aboutCards,6,6,'About Us card').map(card => ({
@@ -35,13 +35,20 @@ module.exports = function validate(raw) {
     image: image(card.image),
     alt: card.alt ? text(card.alt,'Photo caption',150) : ''
   }));
+  const teamCards = array(raw.teamCards ?? defaults.teamCards,6,6,'Team member').map(card => ({
+    title: card?.title ? text(card.title,'Team member name',100) : '',
+    designation: card?.designation ? text(card.designation,'Team member designation',150) : '',
+    description: card?.description ? text(card.description,'Team member description',5000) : '',
+    image: image(card?.image),
+    alt: card?.alt ? text(card.alt,'Team photo description',150) : ''
+  }));
   const projects = raw.projects === undefined ? undefined : array(raw.projects,0,100,'project').map(project => ({
     title:text(project?.title,'Project name',100),
     description:project.description?.trim() ? text(project.description,'Project description',2000) : '',
     photos:array(project.photos,0,100,'project photo').map(p => ({image:image(p?.image,true), alt:text(p.alt,'Photo description',150)}))
   }));
   const pageIntros = {};
-  for (const page of Object.keys(sections)) {
+  for (const page of Object.keys(defaults.pageIntros)) {
     const intro = raw.pageIntros?.[page] ?? defaults.pageIntros[page];
     pageIntros[page] = {title:text(intro.title,'Page title',100), description:text(intro.description,'Page introduction',500)};
   }
@@ -53,5 +60,5 @@ module.exports = function validate(raw) {
       image:image(entry.image), alt:entry.alt ? text(entry.alt,'Photo description',150) : ''
     }));
   }
-  return {entries, pageIntros, projects, logo:image(raw.logo), aboutCards, galleries, services, slides, hero:{line1:text(hero.line1,'Headline',60), line2:text(hero.line2,'Headline',60), description:text(hero.description,'Description',300)}};
+  return {entries, pageIntros, projects, logo:image(raw.logo), aboutCards, teamCards, galleries, services, slides, hero:{line1:text(hero.line1,'Headline',60), line2:text(hero.line2,'Headline',60), description:text(hero.description,'Description',300)}};
 };

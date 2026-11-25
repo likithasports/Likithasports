@@ -180,6 +180,14 @@
       "published": true
     }
   ],
+  "teamCards": [
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""}
+  ],
   "aboutCards": [
     {
       "title": "Our mission",

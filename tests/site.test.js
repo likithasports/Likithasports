@@ -7,6 +7,11 @@ const path = require('node:path');
 
 test('website, dashboard, authenticated publishing and uploaded media', async t => {
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'likitha-'));
+  const legacyContent = {...require('../views/defaults.json')};
+  delete legacyContent.teamCards;
+  const published = path.join(directory, 'published');
+  await fs.mkdir(published);
+  await fs.writeFile(path.join(published, '00000000000000000000-legacy.json'), JSON.stringify(legacyContent));
   process.env.CMS_DATA_DIR = directory;
   process.env.CMS_DEV_SETUP = '1';
   delete process.env.CMS_ADMIN_CREDENTIALS;
@@ -20,9 +25,12 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   const post = (endpoint,data) => fetch(base+'/api/admin/'+endpoint,{method:'POST',headers:{
     'content-type':'application/json', origin:base, cookie:cookie || '', 'x-csrf-token':csrf || ''
   },body:JSON.stringify(data)});
-  for (const endpoint of ['/','/dashboard','/dashboard/clients','/dashboard/testimonials','/about-us','/projects','/clients','/testimonials','/services/athletic-track','/logo.png','/healthz']) {
+  for (const endpoint of ['/','/dashboard','/dashboard/team','/dashboard/clients','/dashboard/testimonials','/about-us','/team','/projects','/clients','/testimonials','/services/athletic-track','/logo.png','/healthz']) {
     assert.equal((await fetch(base+endpoint)).status,200,endpoint);
   }
+  const teamBefore = await (await fetch(base+'/team')).text();
+  assert.equal((teamBefore.match(/<figure class="feature-box about-photo">/g) || []).length,6);
+  assert.match(teamBefore, /<a href="\/about-us">About us<\/a><a href="\/team" aria-current="page">Team<\/a>/);
   assert.equal((await fetch(base+'/services/missing')).status,404);
   assert.equal((await fetch(base+'/api/services?category=unknown')).status,400);
   assert.equal((await (await fetch(base+'/api/services?q=pool')).json()).count,1);
@@ -61,6 +69,8 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   ]}];
   assert.equal(data.aboutCards.length,6);
   data.aboutCards[3] = {image:url,alt:'Court build',title:'Our team',designation:'Coach',description:'Site team'};
+  assert.equal(data.teamCards.length,6);
+  data.teamCards[0] = {image:url,alt:'Team photo',title:'Team profile',designation:'Project Lead',description:'Oversees <court> installation.'};
   data.pageIntros.clients.description = 'Published client introduction';
   data.entries.clients = [{name:'Example school', description:'Outdoor court', image:url, alt:'School court'}];
   data.entries.testimonials = [{name:'Example partner', description:'Excellent <work>', image:null, alt:''}];
@@ -89,8 +99,16 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.ok(about.includes(url) && about.includes('<h3>Our team</h3>') && about.includes('Site team'));
   assert.match(about, /profile-designation">Coach</);
   assert.equal((about.match(/<details class="profile-bio">/g) || []).length,6);
+  const team = await (await fetch(base+'/team')).text();
+  assert.match(team, /<h3>Team profile<\/h3>/);
+  assert.match(team, /Project Lead/);
+  assert.match(team, /Oversees &lt;court&gt; installation/);
+  assert.match(team, /aria-controls="team-description-1"/);
+  assert.ok(team.includes(url));
+  assert.doesNotMatch(about, /Team profile/);
   const saved = await (await fetch(base+'/api/admin/content',{headers:{cookie}})).json();
   assert.deepEqual(saved.aboutCards[3],data.aboutCards[3]);
+  assert.deepEqual(saved.teamCards[0],data.teamCards[0]);
   assert.equal(saved.aboutProfileIndexes.length,6);
   assert.equal(saved.aboutProfileIndexes[0],3);
   assert.equal((await post('logout',{})).status,200);
