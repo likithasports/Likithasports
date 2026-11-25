@@ -43,7 +43,7 @@ module.exports = function validate(raw) {
     alt: card?.alt ? text(card.alt,'Team photo description',150) : ''
   });
   const teamCards = array(raw.teamCards ?? defaults.teamCards,6,6,'Management Team member').map(teamMember);
-  const boardCards = array(raw.boardCards ?? defaults.boardCards,3,3,'Board member').map(teamMember);
+  const boardCards = array(raw.boardCards ?? defaults.boardCards,6,6,'Board member').map(teamMember);
   const staffCards = array(raw.staffCards ?? defaults.staffCards,3,3,'Team member').map(teamMember);
   const projects = raw.projects === undefined ? undefined : array(raw.projects,0,100,'project').map(project => ({
     title:text(project?.title,'Project name',100),
