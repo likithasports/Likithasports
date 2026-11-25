@@ -2,7 +2,7 @@
   <div class="wrap"><h1>Team</h1></div>
 </section>
 {% for division in teamDivisions %}
-<section class="section" aria-labelledby="{{ division.id }}-heading">
+<section class="section team-division" aria-labelledby="{{ division.id }}-heading">
   <div class="wrap section-head"><h2 id="{{ division.id }}-heading">{{ division.title }}</h2></div>
   <div class="wrap feature-grid">
     {% for member in division.cards %}

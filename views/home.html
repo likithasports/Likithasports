@@ -113,6 +113,20 @@
 }
 @media (prefers-reduced-motion: reduce) { .home-project-frame [data-loop-photo] { display: none; } }
 .photo-credit{display:block;color:var(--muted);font-size:12px;margin:6px 0 10px}.photo-credit a,.card .photo-credit a{display:inline;padding:0;border:0;text-decoration:underline}
+/* Keep each team division on the same centered column grid. */
+.team-division .section-head { display: block; text-align: center; }
+.team-division .feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 300px));
+  justify-content: center;
+  gap: 22px;
+}
+@media (max-width: 900px) {
+  .team-division .feature-grid { grid-template-columns: repeat(2, minmax(0, 300px)); }
+}
+@media (max-width: 600px) {
+  .team-division .feature-grid { grid-template-columns: minmax(0, 300px); }
+}
 </style></head>
 <body><a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap"><span>SPORTS SURFACES & SPORTS SUPPLIERS</span><span class="location">Built for schools. Academies. Communities.</span><a href="tel:+918179655506">Call +91 81796 55506 ↗</a></div></div>
