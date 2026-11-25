@@ -97,8 +97,8 @@ async function content(strict = false) {
     for (const project of saved.projects || []) {
       if (project.title === 'Shuttle Cort') project.title = 'Shuttle Court';
     }
-    if (saved.boardCards?.length === 3) {
-      saved.boardCards = saved.boardCards.concat(defaults.boardCards.slice(3));
+    if (saved.boardCards?.length === 6) {
+      saved.boardCards = saved.boardCards.slice(0, 3);
     }
     return {...defaults, ...saved};
   } catch (e) { if (strict) fail('Content storage could not be read.', 503); return defaults; }
