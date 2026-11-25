@@ -103,8 +103,8 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   const projects = await (await fetch(base+'/projects')).text();
   assert.match(projects, /Published project/);
   assert.match(projects, /Police Sports Complex, Rajahmundry/);
-  assert.match(await (await fetch(base+'/clients')).text(), /SP Office, Rajahmundry/);
   const clients = await (await fetch(base+'/clients')).text();
+  assert.doesNotMatch(clients, /<h2>Our clients<|href="\/projects#police-sports-complex"/);
   assert.ok(clients.includes('Published client introduction') && clients.includes('Example school') && clients.includes(url));
   const testimonials = await (await fetch(base+'/testimonials')).text();
   assert.match(testimonials, /Excellent &lt;work&gt;/);
