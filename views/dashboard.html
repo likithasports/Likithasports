@@ -23,7 +23,7 @@ const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,
 function imageUrl(image){
   if (!image || image.startsWith('/media/')) return image || '';
   const bundled = ['basketball.webp','tennis.webp','football-truf.webp','pickleball.webp'];
-  return (bundled.includes(image) ? '/service-photos/' : 'https://likithasports.com/assets/home/') + image;
+  return (bundled.includes(image) ? '/service-photos/' : 'https://www.likithasports.in/assets/home/') + image;
 }
 function notify(message,error=false){$('toast').textContent=message;$('toast').classList.toggle('error',error);$('toast').hidden=false;clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('toast').hidden=true,4500)}
 function markDirty(){dirty=true;$('save-state').textContent='Unpublished changes'}

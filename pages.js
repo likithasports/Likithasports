@@ -28,7 +28,7 @@ const servicePhotos = new Map([
 ]);
 function imageUrl(value) {
   if (servicePhotos.has(value)) return '/service-photos/' + value;
-  return value.startsWith('/media/') ? value : 'https://likithasports.com/assets/home/' + value;
+  return value.startsWith('/media/') ? value : 'https://www.likithasports.in/assets/home/' + value;
 }
 env.addFilter('imageUrl', imageUrl);
 env.addFilter('pad', n => String(n).padStart(2, '0'));

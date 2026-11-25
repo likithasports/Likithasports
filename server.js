@@ -15,7 +15,7 @@ async function route(req, res) {
     res.setHeader('X-Robots-Tag','noindex, nofollow');
     res.setHeader('X-Frame-Options','DENY');
     res.setHeader('Referrer-Policy','no-referrer');
-    res.setHeader('Content-Security-Policy',"default-src 'self'; img-src 'self' https://likithasports.com data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+    res.setHeader('Content-Security-Policy',"default-src 'self'; img-src 'self' https://www.likithasports.in data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
     return {bytes:dashboard,type:'text/html; charset=utf-8'};
   }
   if (pathname === '/healthz') return {json:{status:'ok'}};
