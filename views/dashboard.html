@@ -92,8 +92,9 @@ function renderProfiles(page,cards,indexes=cards.map((_,index)=>index)){
     <label class="upload-label">Upload or replace photo<input type="file" accept="image/jpeg,image/png,image/webp"></label>
     <button type="button" class="btn outline" data-remove-photo>Remove photo</button>
     <label>Name<input data-field="title" maxlength="100" ${team?'':'required'} value="${esc(card.title)}"></label>
-    <label>Designation<input data-field="designation" maxlength="150" value="${esc(card.designation || '')}"></label>
-    <label>${team?'Description':'Paragraph'}<textarea data-field="description" rows="5" maxlength="5000" ${team?'':'required'}>${esc(card.description)}</textarea></label>
+    <label>Designation<input type="text" ${team?'placeholder="Enter designation"':''} data-field="designation" maxlength="150" value="${esc(card.designation || '')}"></label>
+    <label>${team?'Description':'Paragraph'}<textarea ${team?'placeholder="Enter the full description"':''} data-field="description" rows="5" maxlength="5000" ${team?'':'required'}>${esc(card.description)}</textarea></label>
+    ${team?'<p class="hint">The Team page shows the first three lines. Read more opens the full description.</p>':''}
     <label>Photo caption<input data-field="alt" maxlength="150" value="${esc(card.alt)}"></label>
   </fieldset>`;
   }).join('');

@@ -17,12 +17,13 @@
       </div>
       <figcaption>
         <h3>{{ name }}</h3>
-        <p class="profile-designation"><strong>Designation</strong><br>{{ member.designation or "—" }}</p>
-        <p><strong>Description</strong></p>
+        <div class="team-text-box"><strong>Designation</strong><p class="profile-designation">{{ member.designation or "—" }}</p></div>
+        <div class="team-text-box"><strong>Description</strong>
         <p class="team-description" id="{{ division.id }}-description-{{ loop.index }}">{{ member.description or "—" }}</p>
         {% if member.description %}
         <button type="button" class="team-bio-toggle" aria-controls="{{ division.id }}-description-{{ loop.index }}" aria-expanded="false" hidden><span>Read more</span><span class="profile-context"> about {{ name }}</span></button>
         {% endif %}
+        </div>
       </figcaption>
     </figure>
     {% endfor %}
