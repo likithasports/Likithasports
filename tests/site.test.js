@@ -96,7 +96,9 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.match(testimonials, /Excellent &lt;work&gt;/);
   assert.doesNotMatch(testimonials, /We will share genuine client feedback/);
   const about = await (await fetch(base+'/about-us')).text();
-  assert.match(about, /<main id="main">\s*<\/main>/);
+  assert.match(about, /Our story/);
+  assert.match(about, /Nimmagadda Sports Foundation/);
+  assert.match(about, /sreedattasports2007@gmail.com/);
   const team = await (await fetch(base+'/team')).text();
   assert.match(team, /<h3>Team profile<\/h3>/);
   assert.match(team, /Project Lead/);
