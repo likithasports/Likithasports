@@ -1,28 +1,15 @@
 <section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>{{ intro.title }}</h1><p>{{ intro.description }}</p></div></section>
-<section class="section" aria-label="About Us photos">
-  <div class="wrap feature-grid">
+<section class="section" aria-label="About Us profiles">
+  <div class="wrap">
     {% for box in aboutCards %}
-    <figure class="feature-box about-photo">
-      <div class="about-photo-frame">
-      {% if box.image %}
-      <img src="{{ box.image | imageUrl }}" alt="{{ box.alt or box.title }}" width="600" height="600" loading="lazy">
-      {% else %}
-      <svg aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="8" width="38" height="32" rx="4"/><circle cx="16" cy="18" r="3"/><path d="m6 35 10-10 7 7 8-11 11 13"/></svg>
-      {% endif %}
-      </div>
-      <figcaption>
-        <h3>{{ box.title }}</h3>
+    <article>
+        <h2>{{ box.title }}</h2>
         {% if box.designation %}<p class="profile-designation">{{ box.designation }}</p>{% endif %}
         <details class="profile-bio">
           <summary><span class="when-closed">Read more</span><span class="when-open">Read less</span><span class="profile-context"> about {{ box.title }}</span></summary>
           <p>{{ box.description }}</p>
         </details>
-        {% if box.image and box.alt %}<p>{{ box.alt }}</p>{% endif %}
-      </figcaption>
-    </figure>
+    </article>
     {% endfor %}
   </div>
 </section>
-{% if photos.length %}
-  {% include "gallery.html" %}
-{% endif %}
