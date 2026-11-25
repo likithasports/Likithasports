@@ -17,8 +17,8 @@
       </div>
       <figcaption>
         <h3>{{ name }}</h3>
-        <div class="team-text-box"><strong>Designation</strong><p class="profile-designation">{{ member.designation or "—" }}</p></div>
-        <div class="team-text-box"><strong>Description</strong>
+        <div class="team-text-box"><p class="profile-designation">{{ member.designation or "—" }}</p></div>
+        <div class="team-text-box">
         <p class="team-description" id="{{ division.id }}-description-{{ loop.index }}">{{ member.description or "—" }}</p>
         {% if member.description %}
         <button type="button" class="team-bio-toggle" aria-controls="{{ division.id }}-description-{{ loop.index }}" aria-expanded="false" hidden><span>Read more</span><span class="profile-context"> about {{ name }}</span></button>

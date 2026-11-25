@@ -51,7 +51,8 @@
 .profile-context{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .about-photo img{display:block;width:100%;height:100%;object-fit:cover}
 .about-photo figcaption{padding:18px;text-align:center;overflow-wrap:anywhere}
-.team-text-box{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:6px;text-align:left;overflow-wrap:anywhere}
+.team-text-box{display:grid;align-content:center;justify-items:center;margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:6px;text-align:center;overflow-wrap:anywhere}
+.about-photo .team-text-box p{margin:0;max-width:100%;min-width:0}
 .team-description{white-space:pre-line}
 .team-description[data-preview]{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .team-bio-toggle{margin-top:.6rem;padding:7px 14px;border:1px solid var(--navy);border-radius:4px;background:white;color:var(--navy);font-size:14px;font-weight:700}
