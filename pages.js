@@ -86,6 +86,7 @@ function render(url, data) {
     aboutCards: aboutProfileIndexes(data.aboutCards).map(index => data.aboutCards[index]),
     teamDivisions: [
       {id:'management', title:'Management Team', cards:data.teamCards ?? defaults.teamCards},
+      {id:'board', title:'Board Members', cards:data.boardCards ?? defaults.boardCards},
       {id:'team', title:'Team', cards:data.staffCards ?? defaults.staffCards}
     ],
     photos: data.galleries?.[section] || [], hasImages: services.some(s => s.image)

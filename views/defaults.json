@@ -180,6 +180,11 @@
       "published": true
     }
   ],
+  "boardCards": [
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
+    {"title": "", "designation": "", "description": "", "image": null, "alt": ""}
+  ],
   "staffCards": [
     {"title": "", "designation": "", "description": "", "image": null, "alt": ""},
     {"title": "", "designation": "", "description": "", "image": null, "alt": ""},

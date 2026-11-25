@@ -9,6 +9,7 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'likitha-'));
   const legacyContent = {...require('../views/defaults.json')};
   delete legacyContent.staffCards;
+  delete legacyContent.boardCards;
   legacyContent.teamCards = legacyContent.teamCards.map((card,i)=>({...card,title:'Existing member '+(i+1)}));
   const published = path.join(directory, 'published');
   await fs.mkdir(published);
@@ -30,7 +31,10 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
     assert.equal((await fetch(base+endpoint)).status,200,endpoint);
   }
   const teamBefore = await (await fetch(base+'/team')).text();
-  const [management, staff] = teamBefore.split('<h2 id="team-heading">Team</h2>');
+  const [managementAndBoard, staff] = teamBefore.split('<h2 id="team-heading">Team</h2>');
+  const [management, board] = managementAndBoard.split('<h2 id="board-heading">Board Members</h2>');
+  assert.equal((board.match(/<figure class="feature-box about-photo">/g) || []).length,3);
+  assert.match(board, /Board member 3/);
   assert.equal((management.match(/<figure class="feature-box about-photo">/g) || []).length,6);
   assert.match(management, /Existing member 6/);
   assert.equal((staff.match(/<figure class="feature-box about-photo">/g) || []).length,3);
@@ -74,6 +78,8 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.equal(data.aboutCards.length,6);
   data.aboutCards[3] = {image:url,alt:'Court build',title:'Our team',designation:'Coach',description:'Site team'};
   assert.equal(data.teamCards.length,6);
+  assert.equal(data.boardCards.length,3);
+  data.boardCards[1] = {image:url,alt:'Board photo',title:'Board profile',designation:'Director',description:'Board biography'};
   assert.equal(data.staffCards.length,3);
   data.staffCards[2] = {image:url,alt:'Staff photo',title:'Staff profile',designation:'Coach',description:'Coordinates training.'};
   data.teamCards[0] = {image:url,alt:'Team photo',title:'Team profile',designation:'Project Lead',description:'Oversees <court> installation.'};
@@ -116,6 +122,8 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.doesNotMatch(about, /Team profile/);
   const saved = await (await fetch(base+'/api/admin/content',{headers:{cookie}})).json();
   assert.deepEqual(saved.aboutCards[3],data.aboutCards[3]);
+  assert.match(team, /aria-controls="board-description-2"/);
+  assert.deepEqual(saved.boardCards[1],data.boardCards[1]);
   assert.deepEqual(saved.staffCards[2],data.staffCards[2]);
   assert.deepEqual(saved.teamCards[0],data.teamCards[0]);
   assert.equal(saved.aboutProfileIndexes.length,6);

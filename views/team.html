@@ -6,7 +6,7 @@
   <div class="wrap section-head"><h2 id="{{ division.id }}-heading">{{ division.title }}</h2></div>
   <div class="wrap feature-grid">
     {% for member in division.cards %}
-    {% set name = member.title or (division.title ~ " member " ~ loop.index) %}
+    {% set name = member.title or (("Board member" if division.id == "board" else division.title ~ " member") ~ " " ~ loop.index) %}
     <figure class="feature-box about-photo">
       <div class="about-photo-frame">
         {% if member.image %}
