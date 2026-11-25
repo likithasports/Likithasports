@@ -17,9 +17,10 @@
       </div>
       <figcaption>
         <h3>{{ name }}</h3>
-        {% if member.designation %}<p class="profile-designation">{{ member.designation }}</p>{% endif %}
+        <p class="profile-designation"><strong>Designation</strong><br>{{ member.designation or "—" }}</p>
+        <p><strong>Description</strong></p>
+        <p class="team-description" id="{{ division.id }}-description-{{ loop.index }}">{{ member.description or "—" }}</p>
         {% if member.description %}
-        <p class="team-description" id="{{ division.id }}-description-{{ loop.index }}">{{ member.description }}</p>
         <button type="button" class="team-bio-toggle" aria-controls="{{ division.id }}-description-{{ loop.index }}" aria-expanded="false" hidden><span>Read more</span><span class="profile-context"> about {{ name }}</span></button>
         {% endif %}
       </figcaption>
