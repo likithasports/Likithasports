@@ -96,10 +96,7 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.match(testimonials, /Excellent &lt;work&gt;/);
   assert.doesNotMatch(testimonials, /We will share genuine client feedback/);
   const about = await (await fetch(base+'/about-us')).text();
-  assert.ok(about.includes('<h2>Our team</h2>') && about.includes('Site team'));
-  assert.doesNotMatch(about.split('<main id="main">')[1].split('</main>')[0], /<figure|<img|about-photo-frame/);
-  assert.match(about, /profile-designation">Coach</);
-  assert.equal((about.match(/<details class="profile-bio">/g) || []).length,6);
+  assert.match(about, /<main id="main">\s*<\/main>/);
   const team = await (await fetch(base+'/team')).text();
   assert.match(team, /<h3>Team profile<\/h3>/);
   assert.match(team, /Project Lead/);

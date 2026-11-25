@@ -1,15 +1,1 @@
-<section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>{{ intro.title }}</h1><p>{{ intro.description }}</p></div></section>
-<section class="section" aria-label="About Us profiles">
-  <div class="wrap">
-    {% for box in aboutCards %}
-    <article>
-        <h2>{{ box.title }}</h2>
-        {% if box.designation %}<p class="profile-designation">{{ box.designation }}</p>{% endif %}
-        <details class="profile-bio">
-          <summary><span class="when-closed">Read more</span><span class="when-open">Read less</span><span class="profile-context"> about {{ box.title }}</span></summary>
-          <p>{{ box.description }}</p>
-        </details>
-    </article>
-    {% endfor %}
-  </div>
-</section>
+{# The public About Us page intentionally has an empty body. #}
