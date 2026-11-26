@@ -1,6 +1,11 @@
 <section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>{{ intro.title }}</h1><p>{{ intro.description }}</p></div></section>
-{% set imagesOnly = true %}
-<div class="client-images">
+{% if clientLogos.length %}
+<section class="section"><div class="wrap client-logo-wrap">
+  <div class="client-logo-row" role="region" aria-label="Client logos" tabindex="0">
+    {% for logo in clientLogos %}
+    <img src="{{ logo.image | imageUrl }}" alt="{{ logo.alt }}" width="250" height="250" loading="lazy">
+    {% endfor %}
+  </div>
+</div></section>
+{% endif %}
 {% if entries.length %}{% include "page-entries.html" %}{% endif %}
-{% if photos.length %}{% include "gallery.html" %}{% endif %}
-</div>

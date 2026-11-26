@@ -68,6 +68,11 @@ function render(url, data) {
     for (const photo of data.galleries?.projects || []) projectCards.push({photos:[photo]});
     while (section === 'projects' && projectCards.length < 15) projectCards.push({photos:[]});
   }
+  const entries = data.entries?.[section] || [];
+  const photos = data.galleries?.[section] || [];
+  const clientLogos = section === 'clients'
+    ? entries.filter(entry => entry.image).map(entry => ({image:entry.image, alt:entry.alt || entry.name})).concat(photos)
+    : [];
   const html = env.render('home.html', {
     canonical: publicOrigin + (pathname || '/'),
     hero: data.hero, slides, slidesJson: JSON.stringify(slides).replaceAll('<', '\\u003c'),
@@ -77,7 +82,8 @@ function render(url, data) {
     section: isSection ? section + '.html' : null, title: detail?.title || sections[section],
     revision: data.revision,
     intro: data.pageIntros?.[section] || defaults.pageIntros[section],
-    entries: data.entries?.[section] || [],
+    entries: section === 'clients' ? entries.filter(entry => !entry.image) : entries,
+    clientLogos,
     projectCards: pathname ? projectCards : projectCards.map(project => ({
       ...project,
       photos: project.photos.filter(photo => photo.image !== '/media/d18c50e38531292c38d4149074dbabe0.jpg')
@@ -89,7 +95,7 @@ function render(url, data) {
       {id:'board', title:'Board Members', cards:data.boardCards ?? defaults.boardCards},
       {id:'team', title:'Team', cards:data.staffCards ?? defaults.staffCards}
     ],
-    photos: data.galleries?.[section] || [], hasImages: services.some(s => s.image)
+    photos, hasImages: services.some(s => s.image)
   });
   return {html};
 }
