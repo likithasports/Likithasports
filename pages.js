@@ -73,6 +73,11 @@ function render(url, data) {
   const clientLogos = section === 'clients'
     ? entries.filter(entry => entry.image).map(entry => ({image:entry.image, alt:entry.alt || entry.name})).concat(photos)
     : [];
+  const emblemIndex = clientLogos.findIndex(logo => logo.image === '/media/a27f60b10c9ef7be6c798000f36356fb.webp');
+  if (emblemIndex > 0) {
+    const [emblem] = clientLogos.splice(emblemIndex, 1);
+    clientLogos.unshift(emblem);
+  }
   const html = env.render('home.html', {
     canonical: publicOrigin + (pathname || '/'),
     hero: data.hero, slides, slidesJson: JSON.stringify(slides).replaceAll('<', '\\u003c'),
