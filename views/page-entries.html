@@ -1,7 +1,7 @@
 <section class="section"><div class="wrap project-grid">
   {% for entry in entries %}
-  <article class="notice-panel">
-    {% if entry.image %}<img src="{{ entry.image | imageUrl }}" alt="{{ entry.alt or entry.name }}" style="max-width:100%;height:auto" loading="lazy">{% endif %}
+  <article class="{{ 'gallery-photo' if imagesOnly and entry.image else 'notice-panel' }}">
+    {% if entry.image %}<img src="{{ entry.image | imageUrl }}" alt="{{ entry.alt or entry.name }}" {% if imagesOnly %}width="500" height="500"{% else %}style="max-width:100%;height:auto"{% endif %} loading="lazy">{% endif %}
     {% if not imagesOnly or not entry.image %}
     <h2>{{ entry.name }}</h2>
     <p style="white-space:pre-line">{{ entry.description }}</p>
