@@ -1,7 +1,7 @@
 <section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>{{ intro.title }}</h1><p>{{ intro.description }}</p></div></section>
 {% if clientLogos.length %}
 <section class="section"><div class="wrap client-logo-wrap">
-  <div class="client-logo-row" role="region" aria-label="Client logos" tabindex="0">
+  <div class="client-logo-grid" role="region" aria-label="Client logos">
     {% for logo in clientLogos %}
     <img src="{{ logo.image | imageUrl }}" alt="{{ logo.alt }}" width="150" height="150" loading="lazy">
     {% endfor %}

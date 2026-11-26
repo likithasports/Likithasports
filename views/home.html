@@ -127,9 +127,8 @@
 @media (max-width: 600px) {
   .team-division .feature-grid { grid-template-columns: minmax(0, 300px); }
 }
-.client-logo-row { max-width:814px; margin-inline:auto; display:flex; gap:16px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x proximity; }
-.client-logo-row img { flex:0 0 150px; min-width:0; height:auto; aspect-ratio:1; object-fit:contain; align-self:start; scroll-snap-align:start; }
-@media (max-width:720px) { .client-logo-row { max-width:316px; } .client-logo-row img { flex-basis:min(150px,calc((100% - 16px) / 2)); } }
+.client-logo-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(6px,2vw,16px); max-width:814px; margin-inline:auto; }
+.client-logo-grid img { display:block; width:100%; max-width:150px; height:auto; aspect-ratio:1; object-fit:contain; }
 </style></head>
 <body><a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap"><span>SPORTS SURFACES & SPORTS SUPPLIERS</span><span class="location">Built for schools. Academies. Communities.</span><a href="tel:+918179655506">Call +91 81796 55506 ↗</a></div></div>
