@@ -85,6 +85,7 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.equal(data.staffCards.length,3);
   data.staffCards[2] = {image:url,alt:'Staff photo',title:'Staff profile',designation:'Coach',description:'Coordinates training.'};
   data.teamCards[0] = {image:url,alt:'Team photo',title:'Team profile',designation:'Project Lead',description:'Oversees <court> installation.'};
+  data.galleries.clients = [{image:url, alt:'Client logo'}];
   data.pageIntros.clients.description = 'Published client introduction';
   data.entries.clients = [{name:'Example school', description:'Outdoor court', image:url, alt:'School court'}];
   data.entries.testimonials = [{name:'Example partner', description:'Excellent <work>', image:null, alt:''}];
@@ -105,7 +106,9 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.match(projects, /Police Sports Complex, Rajahmundry/);
   const clients = await (await fetch(base+'/clients')).text();
   assert.doesNotMatch(clients, /<h2>Our clients<|href="\/projects#police-sports-complex"/);
-  assert.ok(clients.includes('Published client introduction') && clients.includes('Example school') && clients.includes(url));
+  assert.ok(clients.includes('Published client introduction') && clients.includes('alt="School court"') && clients.includes(url));
+  assert.match(clients, /alt="Client logo"/);
+  assert.doesNotMatch(clients, /<figcaption>|<h2>Example school<|>Outdoor court</);
   const testimonials = await (await fetch(base+'/testimonials')).text();
   assert.match(testimonials, /Excellent &lt;work&gt;/);
   assert.doesNotMatch(testimonials, /We will share genuine client feedback/);

@@ -1,3 +1,4 @@
 <section class="page-intro"><div class="wrap"><p class="eyebrow">Likitha Sports</p><h1>{{ intro.title }}</h1><p>{{ intro.description }}</p></div></section>
+{% set imagesOnly = true %}
 {% if entries.length %}{% include "page-entries.html" %}{% endif %}
 {% if photos.length %}{% include "gallery.html" %}{% endif %}
