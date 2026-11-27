@@ -97,6 +97,8 @@ async function content(strict = false) {
     for (const project of saved.projects || []) {
       if (project.title === 'Shuttle Cort') project.title = 'Shuttle Court';
     }
+    const volleyball = saved.services?.find(service => service.slug === 'beach-volleyball');
+    if (volleyball?.title === 'Beach volleyball') volleyball.title = 'Volley Ball';
     if (saved.boardCards?.length === 6) {
       saved.boardCards = saved.boardCards.slice(0, 3);
     }
