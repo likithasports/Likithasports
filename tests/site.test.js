@@ -9,6 +9,9 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'likitha-'));
   const legacyContent = {...require('../views/defaults.json')};
   delete legacyContent.staffCards;
+  legacyContent.services = legacyContent.services.map(service =>
+    service.slug === 'beach-volleyball' ? {...service, title:'Beach volleyball'} : service
+  );
   legacyContent.boardCards = legacyContent.boardCards.concat(legacyContent.boardCards);
   legacyContent.boardCards[0] = {...legacyContent.boardCards[0],title:'Existing director'};
   legacyContent.teamCards = legacyContent.teamCards.map((card,i)=>({...card,title:'Existing member '+(i+1)}));
@@ -44,6 +47,8 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.equal((await fetch(base+'/services/missing')).status,404);
   assert.equal((await fetch(base+'/api/services?category=unknown')).status,400);
   assert.equal((await (await fetch(base+'/api/services?q=pool')).json()).count,1);
+  const volleyball = await (await fetch(base+'/services/beach-volleyball')).text();
+  assert.match(volleyball, /<h1>Volley Ball<\/h1>/);
   assert.equal((await fetch(base+'/api/admin/content')).status,401);
   const sitemap = await fetch(base+'/sitemap.xml');
   assert.match(sitemap.headers.get('content-type'), /^application\/xml/);
