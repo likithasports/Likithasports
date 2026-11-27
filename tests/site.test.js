@@ -103,7 +103,7 @@ test('website, dashboard, authenticated publishing and uploaded media', async t 
   assert.match(home, /rel="canonical" href="https:\/\/www\.likithasports\.in\/"/);
   const projects = await (await fetch(base+'/projects')).text();
   assert.match(projects, /Published project/);
-  assert.match(projects, /Police Sports Complex, Rajahmundry/);
+  assert.doesNotMatch(projects, /Police Sports Complex, Rajahmundry|Sports infrastructure at the SP Office/);
   const clients = await (await fetch(base+'/clients')).text();
   assert.doesNotMatch(clients, /<h2>Our clients<|href="\/projects#police-sports-complex"/);
   assert.ok(clients.includes('Published client introduction') && clients.includes('alt="School court"') && clients.includes(url));

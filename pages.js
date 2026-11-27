@@ -5,11 +5,6 @@ const env = nunjucks.configure(path.join(__dirname, 'views'), {autoescape: true}
 const categories = {court: 'Courts', field: 'Turfs & tracks', facility: 'Facilities'};
 const sections = {'about-us': 'About us', team: 'Team', projects: 'Projects', clients: 'Clients', testimonials: 'Testimonials'};
 const publicOrigin = 'https://www.likithasports.in';
-const policeSportsComplex = {
-  title: 'Police Sports Complex, Rajahmundry',
-  client: 'SP Office, Rajahmundry',
-  description: 'Sports infrastructure at the SP Office in Rajahmundry, Andhra Pradesh. The site includes an eight-layer synthetic court with fencing and floodlights, a floodlit clay tennis court, and three floodlit volleyball courts. It also includes an outdoor synthetic badminton court, two astro turf cricket pitches with floodlights, and a walking track with landscaped grounds.'
-};
 const servicePhotos = new Map([
   ['basketball.webp', {
     author: 'Sujaybagi',
@@ -93,7 +88,6 @@ function render(url, data) {
       ...project,
       photos: project.photos.filter(photo => photo.image !== '/media/d18c50e38531292c38d4149074dbabe0.jpg')
     })).filter(project => project.photos.length),
-    policeSportsComplex,
     aboutCards: aboutProfileIndexes(data.aboutCards).map(index => data.aboutCards[index]),
     teamDivisions: [
       {id:'management', title:'Management Team', cards:data.teamCards ?? defaults.teamCards},
